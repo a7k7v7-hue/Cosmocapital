@@ -37,7 +37,7 @@ export default function Header() {
           </div>
         </a>
 
-        <nav className="hidden md:flex" style={{ flex: 1, display: "flex", gap: 4 }}>
+        <nav className="hidden md:flex" style={{ flex: 1, gap: 4 }}>
           {navLinks.map((link) => (
             <a key={link.href} href={link.href} style={{
               padding: "7px 14px", borderRadius: 6, fontSize: "13.5px",
@@ -55,7 +55,7 @@ export default function Header() {
           ))}
         </nav>
 
-        <div className="hidden md:flex" style={{ alignItems: "center", gap: 16, marginLeft: "auto", display: "flex" }}>
+        <div className="hidden md:flex" style={{ alignItems: "center", gap: 16, marginLeft: "auto" }}>
           <a href="tel:+79035374488" style={{ fontSize: 14, fontWeight: 600, color: "var(--dark)", letterSpacing: ".01em" }}>
             +7 (903) 537-44-88
           </a>
