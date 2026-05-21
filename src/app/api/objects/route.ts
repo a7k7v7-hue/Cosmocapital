@@ -2,8 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { objectsQuerySchema } from "@/lib/schemas";
 import { Prisma } from "@/generated/prisma";
+import { requireApiToken } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
+  const authError = requireApiToken(req);
+  if (authError) return authError;
+
   const params = Object.fromEntries(req.nextUrl.searchParams);
   const parsed = objectsQuerySchema.safeParse(params);
 
