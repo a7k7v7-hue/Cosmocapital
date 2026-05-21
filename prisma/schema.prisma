@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ObjectType {
+  RENT
+  SALE
+}
+
+enum ObjectCategory {
+  OFFICE
+  RETAIL
+  WAREHOUSE
+  FREE_PURPOSE
+  PRODUCTION
+}
+
+enum ObjectStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum LeadStatus {
+  NEW
+  IN_WORK
+  DONE
+  REJECTED
+}
+
+model Object {
+  id           String         @id @default(uuid())
+  type         ObjectType
+  category     ObjectCategory
+  title        String
+  description  String
+  address      String
+  metro        String?
+  areaTotal    Float
+  areaMin      Float?
+  floor        Int?
+  floorsTotal  Int?
+  price        Float
+  pricePerSqm  Float?
+  photos       String[]
+  status       ObjectStatus   @default(ACTIVE)
+  featured     Boolean        @default(false)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  leads        Lead[]
+
+  @@map("objects")
+}
+
+model Lead {
+  id        String     @id @default(uuid())
+  name      String
+  phone     String
+  email     String?
+  message   String?
+  objectId  String?
+  object    Object?    @relation(fields: [objectId], references: [id], onDelete: SetNull)
+  source    String     @default("site")
+  status    LeadStatus @default(NEW)
+  notes     String?
+  createdAt DateTime   @default(now())
+
+  @@map("leads")
+}
+
+model Service {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  icon        String?
+  order       Int      @default(0)
+  active      Boolean  @default(true)
+
+  @@map("services")
+}
