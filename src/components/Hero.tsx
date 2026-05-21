@@ -18,7 +18,7 @@ export default function Hero() {
 
   return (
     <section style={{ position: "relative", minHeight: "92vh", display: "flex", alignItems: "center", overflow: "hidden", paddingTop: 68 }}>
-      <div style={{ position: "absolute", inset: 0, background: "#0f1a2e" }} />
+      <div style={{ position: "absolute", inset: 0, background: "var(--dark)" }} />
       <div style={{
         position: "absolute", inset: 0,
         backgroundImage: "repeating-linear-gradient(135deg,transparent,transparent 60px,rgba(255,255,255,.025) 60px,rgba(255,255,255,.025) 120px)",

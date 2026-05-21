@@ -26,7 +26,7 @@ export default function Header() {
       }}>
         <a href="/" style={{ display: "flex", alignItems: "center", gap: 11 }}>
           <div style={{
-            width: 36, height: 36, background: "var(--accent)", borderRadius: 6,
+            width: 36, height: 36, background: "var(--dark)", borderRadius: 6,
             display: "flex", alignItems: "center", justifyContent: "center",
             fontFamily: "var(--font-cormorant, serif)", fontSize: 14, fontWeight: 600,
             color: "#fff", letterSpacing: ".5px", flexShrink: 0,
