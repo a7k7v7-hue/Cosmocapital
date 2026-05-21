@@ -23,6 +23,12 @@ function validatePhone(v: string): boolean {
   return v.replace(/\D/g, "").length === 11;
 }
 
+const inp: React.CSSProperties = {
+  width: "100%", border: "1.5px solid var(--border)", borderRadius: "var(--r)",
+  padding: "12px 14px", fontSize: 14, color: "var(--text)", fontFamily: "inherit",
+  outline: "none", transition: "var(--trans)", background: "var(--surface)",
+};
+
 export default function LeadForm({ objectId, source = "site" }: LeadFormProps) {
   const [state, setState] = useState<State>("idle");
   const [phone, setPhone] = useState("");
@@ -35,7 +41,6 @@ export default function LeadForm({ objectId, source = "site" }: LeadFormProps) {
     const name = (form.elements.namedItem("name") as HTMLInputElement).value.trim();
     const nameOk = name.length >= 2;
     const phoneOk = validatePhone(phone);
-
     setNameError(!nameOk);
     setPhoneError(!phoneOk);
     if (!nameOk || !phoneOk) return;
@@ -46,8 +51,7 @@ export default function LeadForm({ objectId, source = "site" }: LeadFormProps) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name,
-          phone,
+          name, phone,
           message: (form.elements.namedItem("message") as HTMLTextAreaElement).value,
           objectId: objectId ?? undefined,
           source,
@@ -61,66 +65,44 @@ export default function LeadForm({ objectId, source = "site" }: LeadFormProps) {
 
   if (state === "done") {
     return (
-      <div className="text-center py-8">
-        <div className="text-4xl mb-3 text-green-500">✓</div>
-        <p className="font-semibold text-gray-900">Заявка принята</p>
-        <p className="text-sm text-gray-500 mt-1">Свяжемся с вами в течение рабочего дня</p>
+      <div style={{ textAlign: "center", padding: "24px 0" }}>
+        <div style={{ fontSize: 32, color: "var(--accent)", marginBottom: 8 }}>✓</div>
+        <p style={{ fontWeight: 600, color: "var(--dark)" }}>Заявка принята</p>
+        <p style={{ fontSize: 13, color: "var(--muted)", marginTop: 4 }}>Свяжемся в течение рабочего дня</p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-3" noValidate>
+    <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 10 }} noValidate>
       <div>
-        <input
-          name="name"
-          type="text"
-          placeholder="Ваше имя"
+        <input name="name" type="text" placeholder="Ваше имя"
           onChange={() => setNameError(false)}
-          className={`w-full border rounded-lg px-4 py-3 text-sm outline-none transition-colors ${
-            nameError ? "border-red-400 focus:border-red-500" : "border-gray-200 focus:border-blue-500"
-          }`}
+          style={{ ...inp, borderColor: nameError ? "#c53030" : "var(--border)" }}
         />
-        {nameError && <p className="text-red-500 text-xs mt-1">Введите имя</p>}
+        {nameError && <p style={{ color: "#c53030", fontSize: 12, marginTop: 4 }}>Введите имя</p>}
       </div>
-
       <div>
-        <input
-          type="tel"
-          placeholder="+7 (___) ___-__-__"
+        <input type="tel" placeholder="+7 (___) ___-__-__"
           value={phone}
           onChange={(e) => { setPhone(formatPhone(e.target.value)); setPhoneError(false); }}
-          className={`w-full border rounded-lg px-4 py-3 text-sm outline-none transition-colors ${
-            phoneError ? "border-red-400 focus:border-red-500" : "border-gray-200 focus:border-blue-500"
-          }`}
+          style={{ ...inp, borderColor: phoneError ? "#c53030" : "var(--border)" }}
         />
-        {phoneError && <p className="text-red-500 text-xs mt-1">Введите корректный номер</p>}
+        {phoneError && <p style={{ color: "#c53030", fontSize: 12, marginTop: 4 }}>Введите корректный номер</p>}
       </div>
-
-      <textarea
-        name="message"
-        rows={3}
-        placeholder="Вопрос или комментарий"
-        className="border border-gray-200 rounded-lg px-4 py-3 text-sm outline-none focus:border-blue-500 transition-colors resize-none"
+      <textarea name="message" rows={3} placeholder="Вопрос или комментарий"
+        style={{ ...inp, resize: "none" }}
       />
-
       {state === "error" && (
-        <p className="text-red-500 text-sm">Ошибка отправки. Попробуйте ещё раз.</p>
+        <p style={{ color: "#c53030", fontSize: 13 }}>Ошибка отправки. Попробуйте ещё раз.</p>
       )}
-
-      <button
-        type="submit"
-        disabled={state === "loading"}
-        className="relative bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white py-3 rounded-lg font-medium transition-colors"
-      >
-        {state === "loading" ? (
-          <span className="flex items-center justify-center gap-2">
-            <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-            Отправка...
-          </span>
-        ) : (
-          "Оставить заявку"
-        )}
+      <button type="submit" disabled={state === "loading"} style={{
+        background: "var(--accent)", color: "#fff", border: "none",
+        padding: "13px", borderRadius: "var(--r)", fontSize: 14, fontWeight: 600,
+        cursor: "pointer", transition: "var(--trans)", opacity: state === "loading" ? .6 : 1,
+        fontFamily: "inherit",
+      }}>
+        {state === "loading" ? "Отправка..." : "Оставить заявку"}
       </button>
     </form>
   );

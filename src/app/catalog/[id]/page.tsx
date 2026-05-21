@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const obj = await getObject(id);
   if (!obj) return { title: "Объект не найден" };
   return {
-    title: `${obj.title} - Космокапитал`,
+    title: `${obj.title}`,
     description: obj.description.slice(0, 160),
     openGraph: {
       title: obj.title,
@@ -55,63 +55,63 @@ export default async function ObjectPage({ params }: PageProps) {
   ].filter(Boolean) as { label: string; value: string }[];
 
   return (
-    <div className="pt-24 pb-20 min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto px-6">
-        <a
-          href="/catalog"
-          className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 mb-6 transition-colors"
-        >
-          ← Назад к каталогу
-        </a>
+    <div style={{ paddingTop: 68, minHeight: "100vh", background: "var(--bg)" }}>
+      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "40px 40px 80px" }}>
+        <a href="/catalog" style={{
+          display: "inline-flex", alignItems: "center", gap: 6,
+          fontSize: 13, color: "var(--muted)", marginBottom: 24,
+          transition: "var(--trans)",
+        }}>← Назад к каталогу</a>
 
-        <div className="grid lg:grid-cols-[1fr_360px] gap-8">
-          <div className="flex flex-col gap-6">
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 360px", gap: 32 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
             <PhotoGallery photos={obj.photos} title={obj.title} />
 
-            <div className="bg-white rounded-2xl p-6 border border-gray-100">
-              <div className="flex flex-wrap gap-2 mb-4">
-                <span className="bg-blue-100 text-blue-700 text-xs font-medium px-3 py-1 rounded-full">
-                  {TYPE_LABELS[obj.type]}
-                </span>
-                <span className="bg-gray-100 text-gray-600 text-xs font-medium px-3 py-1 rounded-full">
-                  {CATEGORY_LABELS[obj.category]}
-                </span>
+            <div style={{ background: "var(--surface)", borderRadius: 12, padding: 24, border: "1px solid var(--border)" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
+                <span style={{
+                  background: obj.type === "SALE" ? "#c53030" : "var(--accent)", color: "#fff",
+                  fontSize: 11, fontWeight: 600, padding: "3px 9px", borderRadius: 4,
+                }}>{TYPE_LABELS[obj.type]}</span>
+                <span style={{
+                  background: "var(--surface2)", color: "var(--muted)",
+                  fontSize: 11, fontWeight: 500, padding: "3px 9px", borderRadius: 4,
+                  border: "1px solid var(--border)",
+                }}>{CATEGORY_LABELS[obj.category]}</span>
               </div>
-
-              <h1 className="text-2xl font-bold text-gray-900 mb-4">{obj.title}</h1>
-              <p className="text-gray-600 leading-relaxed whitespace-pre-line">
+              <h1 style={{ fontFamily: "var(--font-cormorant, serif)", fontSize: 32, fontWeight: 400, color: "var(--dark)", marginBottom: 16, lineHeight: 1.2 }}>
+                {obj.title}
+              </h1>
+              <p style={{ color: "var(--muted)", lineHeight: 1.8, fontSize: 14, whiteSpace: "pre-line" }}>
                 {obj.description}
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl p-6 border border-gray-100">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Характеристики
-              </h2>
-              <dl className="grid sm:grid-cols-2 gap-3">
+            <div style={{ background: "var(--surface)", borderRadius: 12, padding: 24, border: "1px solid var(--border)" }}>
+              <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--dark)", marginBottom: 16 }}>Характеристики</h2>
+              <dl style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                 {specs.map(({ label, value }) => (
-                  <div key={label} className="flex flex-col">
-                    <dt className="text-xs text-gray-400 uppercase tracking-wider">
-                      {label}
-                    </dt>
-                    <dd className="text-sm font-medium text-gray-800 mt-0.5">
-                      {value}
-                    </dd>
+                  <div key={label}>
+                    <dt style={{ fontSize: 11, color: "var(--muted)", textTransform: "uppercase", letterSpacing: ".08em" }}>{label}</dt>
+                    <dd style={{ fontSize: 14, fontWeight: 500, color: "var(--dark)", marginTop: 2 }}>{value}</dd>
                   </div>
                 ))}
               </dl>
             </div>
           </div>
 
-          <div className="flex flex-col gap-4">
-            <div className="bg-white rounded-2xl p-6 border border-gray-100 sticky top-24">
-              <div className="mb-4">
-                <div className="text-2xl font-bold text-gray-900">
+          <div>
+            <div style={{
+              background: "var(--surface)", borderRadius: 12, padding: 24,
+              border: "1px solid var(--border)", position: "sticky", top: 84,
+            }}>
+              <div style={{ marginBottom: 20 }}>
+                <div style={{ fontFamily: "var(--font-cormorant, serif)", fontSize: 28, fontWeight: 600, color: "var(--dark)" }}>
                   {new Intl.NumberFormat("ru-RU").format(obj.price)}{" "}
                   {obj.type === "RENT" ? "₽/мес" : "₽"}
                 </div>
                 {obj.pricePerSqm && (
-                  <div className="text-sm text-gray-400 mt-0.5">
+                  <div style={{ fontSize: 13, color: "var(--muted)", marginTop: 2 }}>
                     {new Intl.NumberFormat("ru-RU").format(obj.pricePerSqm)} ₽/м²
                   </div>
                 )}
@@ -119,12 +119,9 @@ export default async function ObjectPage({ params }: PageProps) {
 
               <LeadForm objectId={obj.id} source="object_page" />
 
-              <div className="mt-4 pt-4 border-t border-gray-100 text-center">
-                <a
-                  href="tel:+78001234567"
-                  className="text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors"
-                >
-                  +7 (800) 123-45-67
+              <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid var(--border)", textAlign: "center" }}>
+                <a href="tel:+79035374488" style={{ color: "var(--accent)", fontWeight: 600, fontSize: 14 }}>
+                  +7 (903) 537-44-88
                 </a>
               </div>
             </div>

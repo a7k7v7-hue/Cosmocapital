@@ -58,8 +58,8 @@ async function fetchObjects(params: Record<string, string | string[] | undefined
 }
 
 export const metadata = {
-  title: "Каталог объектов - Космокапитал",
-  description: "Аренда и продажа коммерческой недвижимости",
+  title: "Каталог объектов",
+  description: "Аренда и продажа коммерческой недвижимости в Москве и МО",
 };
 
 export default async function CatalogPage({ searchParams }: PageProps) {
@@ -75,32 +75,35 @@ export default async function CatalogPage({ searchParams }: PageProps) {
   const { items, total, page, totalPages } = data;
 
   return (
-    <div className="pt-24 pb-20 min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Каталог объектов</h1>
+    <div style={{ paddingTop: 68, minHeight: "100vh", background: "var(--bg)" }}>
+      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "40px 40px 80px" }}>
+        <div style={{ marginBottom: 32 }}>
+          <p style={{ color: "var(--accent)", fontSize: 12, fontWeight: 600, letterSpacing: ".15em", textTransform: "uppercase", marginBottom: 8 }}>
+            Недвижимость
+          </p>
+          <h1 style={{ fontFamily: "var(--font-cormorant, serif)", fontSize: 40, fontWeight: 400, color: "var(--dark)" }}>
+            Каталог объектов
+          </h1>
           {total > 0 && (
-            <p className="text-gray-500 mt-1">Найдено: {total} объектов</p>
+            <p style={{ color: "var(--muted)", marginTop: 4, fontSize: 14 }}>Найдено: {total} объектов</p>
           )}
         </div>
 
-        <div className="flex flex-col md:flex-row gap-8">
+        <div style={{ display: "flex", gap: 32, alignItems: "flex-start" }}>
           <Suspense>
             <FilterPanel />
           </Suspense>
 
-          <div className="flex-1">
+          <div style={{ flex: 1 }}>
             {items.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-24 text-center">
-                <div className="text-5xl mb-4">🔍</div>
-                <h2 className="text-xl font-semibold text-gray-700 mb-2">
-                  Объектов не найдено
-                </h2>
-                <p className="text-gray-400">Попробуйте изменить параметры поиска</p>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "80px 0", textAlign: "center" }}>
+                <div style={{ fontSize: 48, marginBottom: 16 }}>🔍</div>
+                <h2 style={{ fontSize: 18, fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>Объектов не найдено</h2>
+                <p style={{ color: "var(--muted)", fontSize: 14 }}>Попробуйте изменить параметры поиска</p>
               </div>
             ) : (
               <>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 20 }}>
                   {items.map((obj) => (
                     <ObjectCard key={obj.id} obj={obj} />
                   ))}
