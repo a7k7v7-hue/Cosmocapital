@@ -13,8 +13,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Космокапитал",
-  description: "Инвестиции в недвижимость и капитальные активы",
+  title: {
+    default: "Cosmo Capital - Коммерческая недвижимость Москва",
+    template: "%s | Cosmo Capital",
+  },
+  description: "Аренда и продажа коммерческой недвижимости в Москве. Офисы, торговые площади, склады. Полное сопровождение сделки.",
+  keywords: ["коммерческая недвижимость", "аренда офиса", "продажа склада", "торговое помещение", "Москва"],
+  openGraph: {
+    type: "website",
+    locale: "ru_RU",
+    siteName: "Cosmo Capital",
+  },
 };
 
 export default function RootLayout({

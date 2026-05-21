@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CATEGORY_LABELS, TYPE_LABELS } from "@/types/objects";
+import PhotoUpload from "@/components/admin/PhotoUpload";
 
 type ObjectStatus = "ACTIVE" | "ARCHIVED";
 type ObjType = "RENT" | "SALE";
@@ -36,6 +37,7 @@ export default function ObjectForm({ initialData }: ObjectFormProps) {
   const isEdit = !!initialData;
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [photos, setPhotos] = useState<string[]>(initialData?.photos ?? []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -58,7 +60,7 @@ export default function ObjectForm({ initialData }: ObjectFormProps) {
       pricePerSqm: fd.get("pricePerSqm") || null,
       status: fd.get("status"),
       featured: fd.get("featured") === "on",
-      photos: initialData?.photos ?? [],
+      photos,
     };
 
     const url = isEdit
@@ -183,6 +185,11 @@ export default function ObjectForm({ initialData }: ObjectFormProps) {
             className="w-4 h-4 rounded border-gray-300 text-blue-600" />
           <span className="text-sm text-gray-700">Показывать в топе</span>
         </label>
+      </div>
+
+      <div>
+        <span className="text-xs text-gray-500 font-medium block mb-2">Фотографии</span>
+        <PhotoUpload photos={photos} onChange={setPhotos} />
       </div>
 
       {error && <p className="text-red-500 text-sm">{error}</p>}
