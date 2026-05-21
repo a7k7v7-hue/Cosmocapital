@@ -1,0 +1,39 @@
+services:
+  - type: web
+    name: cosmacapital
+    env: node
+    region: frankfurt
+    plan: free
+    buildCommand: npm run build
+    startCommand: npm run start
+    healthCheckPath: /api/objects
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXTAUTH_URL
+        value: https://cosmacapital.onrender.com
+      - key: NEXTAUTH_SECRET
+        generateValue: true
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: API_TOKEN
+        generateValue: true
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: cosmacapital-db
+          property: connectionString
+
+databases:
+  - name: cosmacapital-db
+    plan: free
+    region: frankfurt

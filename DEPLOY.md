@@ -1,57 +1,47 @@
-# Деплой Cosmo Capital — Railway
+# Деплой Cosmo Capital — Render.com
 
 ## Обзор
 
 | Компонент | Сервис |
 |---|---|
-| Next.js приложение | Railway (GitHub repo) |
-| PostgreSQL | Railway (встроенная БД) |
+| Next.js приложение | Render (Web Service, free tier) |
+| PostgreSQL | Render (PostgreSQL, free tier, 90 дней) |
 | Хранилище фото | Supabase Storage |
 
----
-
-## Шаг 1 — Добавить репозиторий в Railway
-
-В проекте `pretty-enjoyment` (там уже есть Postgres):
-
-1. Нажми **+** на канвасе
-2. Выбери **GitHub Repo** → `Cosmocapital`
-3. Railway автоматически добавит `DATABASE_URL` в переменные приложения
+> Free tier засыпает после 15 мин без запросов. Для продакшна — перейди на Starter ($7/мес).
 
 ---
 
-## Шаг 2 — Переменные окружения
+## Шаг 1 — Blueprint (автодеплой через render.yaml)
 
-Railway → выбери сервис приложения → **Variables** → добавь по одной:
+`render.yaml` в корне репозитория описывает весь стек. Railway создаст веб-сервис и PostgreSQL за один клик.
+
+1. Render Dashboard → **New** → **Blueprint**
+2. Подключи репозиторий `Cosmocapital`
+3. Render прочитает `render.yaml` и создаст оба сервиса автоматически
+
+---
+
+## Шаг 2 — Переменные окружения (после Blueprint)
+
+Render → сервис `cosmacapital` → **Environment** → добавь вручную (они не в render.yaml из соображений безопасности):
 
 | Переменная | Откуда взять |
 |---|---|
-| `NODE_ENV` | `production` |
-| `NEXTAUTH_URL` | URL вида `https://xxx.railway.app` (после первого деплоя) |
-| `NEXTAUTH_SECRET` | результат `openssl rand -hex 32` в терминале |
 | `ADMIN_EMAIL` | твой email |
 | `ADMIN_PASSWORD` | надёжный пароль |
-| `API_TOKEN` | результат `openssl rand -hex 24` в терминале |
 | `SUPABASE_URL` | Supabase → Settings → API → Project URL |
 | `SUPABASE_ANON_KEY` | Supabase → Settings → API → anon key |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Settings → API → service_role key |
 | `NEXT_PUBLIC_SUPABASE_URL` | то же что `SUPABASE_URL` |
 
-`DATABASE_URL` добавляется автоматически при связке с Postgres-сервисом.
+`DATABASE_URL`, `NEXTAUTH_SECRET` и `API_TOKEN` — Render генерирует автоматически из `render.yaml`.
 
 ---
 
-## Шаг 3 — Первый деплой
+## Шаг 3 — Миграция БД
 
-Railway деплоит автоматически при каждом пуше в `main`.
-
-Либо вручную: Railway → сервис приложения → **Deploy** → **Deploy Now**.
-
----
-
-## Шаг 4 — Миграция и сид БД
-
-После успешного деплоя: Railway → сервис приложения → **Shell**:
+После первого успешного деплоя: Render → сервис → **Shell**:
 
 ```
 npx prisma migrate deploy
@@ -60,43 +50,38 @@ npm run db:seed
 
 ---
 
-## Шаг 5 — Supabase Storage
+## Шаг 4 — Supabase Storage
 
 1. Supabase → **Storage** → **New bucket**
-2. Имя bucket: `objects`
-3. **Public bucket**: включить
-4. Разрешённые MIME-типы: `image/jpeg`, `image/png`, `image/webp`
+2. Имя: `objects`, **Public bucket**: включить
+3. Разрешённые MIME-типы: `image/jpeg`, `image/png`, `image/webp`
 
 ---
 
-## Шаг 6 — Домен cosmacapital.ru
+## Шаг 5 — Домен cosmacapital.ru
 
-1. Railway → сервис → **Settings** → **Custom Domain** → добавь `cosmacapital.ru`
-2. В DNS-регистраторе добавь CNAME-запись `@` на адрес из Railway
-3. Обнови переменную `NEXTAUTH_URL` на `https://cosmacapital.ru`
+1. Render → сервис → **Settings** → **Custom Domain** → добавь `cosmacapital.ru`
+2. В DNS-регистраторе: CNAME `@` → адрес из Render
+3. Обнови `NEXTAUTH_URL` на `https://cosmacapital.ru`
 
 ---
 
 ## Smoke Test
 
-После деплоя проверь:
-
-- [ ] Главная `https://cosmacapital.ru` открывается
-- [ ] `/catalog` — каталог с объектами загружается
+- [ ] `https://cosmacapital.onrender.com` — главная открывается
+- [ ] `/catalog` — каталог загружается
 - [ ] `/admin` — редирект на `/admin/login`
-- [ ] Вход через `/admin/login` работает
-- [ ] Форма на главной — заявка сохраняется в `/admin/leads`
-- [ ] `GET /api/objects` — возвращает список объектов
+- [ ] Вход работает
+- [ ] Форма на главной — заявка в `/admin/leads`
+- [ ] `GET /api/objects` — список объектов
 
 ---
 
 ## API для Telegram-бота
 
 ```js
-const res = await fetch("https://cosmacapital.ru/api/objects", {
-  headers: { Authorization: "Bearer <твой API_TOKEN>" }
+const res = await fetch("https://cosmacapital.onrender.com/api/objects", {
+  headers: { Authorization: "Bearer <значение API_TOKEN из Render>" }
 });
 const { objects, total } = await res.json();
 ```
-
-Значение `API_TOKEN` — то же что задал в переменных Railway.
