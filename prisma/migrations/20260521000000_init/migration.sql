@@ -1,4 +1,4 @@
-﻿-- CreateEnum
+-- CreateEnum
 CREATE TYPE "ObjectType" AS ENUM ('RENT', 'SALE');
 
 -- CreateEnum
@@ -64,4 +64,3 @@ CREATE TABLE "services" (
 
 -- AddForeignKey
 ALTER TABLE "leads" ADD CONSTRAINT "leads_objectId_fkey" FOREIGN KEY ("objectId") REFERENCES "objects"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
