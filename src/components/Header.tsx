@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 const navLinks = [
+  { label: "Каталог", href: "/catalog" },
   { label: "О компании", href: "#about" },
   { label: "Услуги", href: "#services" },
   { label: "Контакты", href: "#contacts" },
