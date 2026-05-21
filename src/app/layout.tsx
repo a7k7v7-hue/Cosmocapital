@@ -1,42 +1,40 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
+  subsets: ["latin", "cyrillic"],
+  weight: ["400", "600"],
+  style: ["normal", "italic"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "Cosmocapital - Коммерческая недвижимость Москва",
-    template: "%s | Cosmocapital",
+    default: "Космо Капитал - Коммерческая недвижимость Москвы",
+    template: "%s | Космо Капитал",
   },
-  description: "Аренда и продажа коммерческой недвижимости в Москве. Офисы, торговые площади, склады. Полное сопровождение сделки.",
-  keywords: ["коммерческая недвижимость", "аренда офиса", "продажа склада", "торговое помещение", "Москва"],
+  description: "Консультант по коммерческой недвижимости. Офисы, склады, торговые площади, инвестиционные объекты. Москва и МО с 2006 года. RICS.",
+  keywords: ["коммерческая недвижимость", "аренда офиса", "продажа склада", "торговое помещение", "RICS", "Москва"],
   openGraph: {
     type: "website",
     locale: "ru_RU",
-    siteName: "Cosmocapital",
+    siteName: "Космо Капитал",
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="ru"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="ru" className={`${cormorant.variable} ${dmSans.variable}`}>
+      <body style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>{children}</body>
     </html>
   );
 }

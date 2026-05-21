@@ -27,37 +27,26 @@ export default async function FeaturedObjects() {
   if (items.length === 0) return null;
 
   return (
-    <section className="py-24 bg-white">
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="flex items-end justify-between mb-10">
-          <div>
-            <p className="text-blue-600 text-sm font-medium tracking-widest uppercase mb-2">
-              Актуальные предложения
-            </p>
-            <h2 className="text-4xl font-bold text-gray-900">Объекты в топе</h2>
-          </div>
-          <Link
-            href="/catalog"
-            className="hidden sm:inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
-          >
-            Смотреть все →
-          </Link>
+    <section style={{ maxWidth: 1280, margin: "0 auto", padding: "80px 40px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 40, flexWrap: "wrap", gap: 16 }}>
+        <div>
+          <p style={{ color: "var(--accent)", fontSize: 12, fontWeight: 600, letterSpacing: ".15em", textTransform: "uppercase", marginBottom: 8 }}>
+            Спецпредложения
+          </p>
+          <h2 style={{ fontFamily: "var(--font-cormorant, serif)", fontSize: 40, fontWeight: 400, color: "var(--dark)" }}>
+            Актуальные объекты
+          </h2>
         </div>
+        <Link href="/catalog" style={{
+          background: "var(--accent)", color: "#fff", padding: "10px 22px",
+          borderRadius: "var(--r)", fontSize: 13, fontWeight: 600, letterSpacing: ".02em",
+        }}>Весь каталог →</Link>
+      </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {items.map((obj) => (
-            <ObjectCard key={obj.id} obj={obj} />
-          ))}
-        </div>
-
-        <div className="mt-8 text-center sm:hidden">
-          <Link
-            href="/catalog"
-            className="inline-flex items-center gap-2 text-sm text-blue-600 font-medium"
-          >
-            Смотреть все объекты →
-          </Link>
-        </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 20 }}>
+        {items.map((obj) => (
+          <ObjectCard key={obj.id} obj={obj} />
+        ))}
       </div>
     </section>
   );
