@@ -7,7 +7,7 @@ export default function Hero() {
             Агентство коммерческой недвижимости
           </p>
           <h1 className="text-5xl font-bold leading-tight mb-6">
-            Cosmo Capital
+            Cosmocapital
           </h1>
           <p className="text-xl text-gray-300 leading-relaxed mb-10">
             Аренда и продажа коммерческой недвижимости в Москве.
