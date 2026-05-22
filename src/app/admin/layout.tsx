@@ -1,4 +1,5 @@
 import Link from "next/link";
+import SignOutButton from "@/components/admin/SignOutButton";
 
 const navItems = [
   { href: "/admin", label: "Главная", icon: "📊" },
@@ -29,12 +30,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           ))}
         </nav>
         <div className="px-5 py-4 border-t border-gray-100">
-          <Link
-            href="/api/auth/signout"
-            className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            Выйти
-          </Link>
+          <SignOutButton />
         </div>
       </aside>
       <main className="flex-1 overflow-auto p-8">{children}</main>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 
 type LeadStatus = "NEW" | "IN_WORK" | "DONE" | "REJECTED";
 
@@ -76,8 +76,8 @@ export default function LeadsTable({ leads: initial }: { leads: Lead[] }) {
         </thead>
         <tbody className="divide-y divide-gray-50">
           {leads.map((lead) => (
-            <>
-              <tr key={lead.id} className="hover:bg-gray-50 transition-colors">
+            <Fragment key={lead.id}>
+              <tr className="hover:bg-gray-50 transition-colors">
                 <td className="px-4 py-3">
                   <div className="font-medium text-gray-900">{lead.name}</div>
                   <a href={`tel:${lead.phone}`} className="text-xs text-blue-600 hover:text-blue-800">
@@ -113,7 +113,7 @@ export default function LeadsTable({ leads: initial }: { leads: Lead[] }) {
                 </td>
               </tr>
               {expanded === lead.id && (
-                <tr key={`${lead.id}-details`}>
+                <tr>
                   <td colSpan={5} className="px-4 py-4 bg-gray-50 border-t border-gray-100">
                     <div className="grid sm:grid-cols-2 gap-4 text-sm">
                       {lead.email && (
@@ -142,7 +142,7 @@ export default function LeadsTable({ leads: initial }: { leads: Lead[] }) {
                   </td>
                 </tr>
               )}
-            </>
+            </Fragment>
           ))}
         </tbody>
       </table>
