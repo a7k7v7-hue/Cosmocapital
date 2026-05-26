@@ -14,9 +14,12 @@ function toLocalPath(oldUrl: string): string {
   return NEW_PREFIX + base.toLowerCase();
 }
 
-export async function POST() {
+export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const adminPw = process.env.ADMIN_PASSWORD;
+  const headerPw = req.headers.get("x-admin-pw");
+  const authorized = session || (adminPw && headerPw === adminPw);
+  if (!authorized) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const objects = await prisma.object.findMany({ select: { id: true, photos: true } });
   const toUpdate = objects.filter((o) => o.photos.some((p) => p.includes("cosmocapital.ru")));
