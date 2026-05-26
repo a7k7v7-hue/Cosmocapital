@@ -22,21 +22,22 @@ export default function PrintLayout({ children }: { children: React.ReactNode })
           }
           @media print {
             body { background: #fff; }
-            #sheet { box-shadow: none; margin: 0; border-radius: 0; }
+            #sheet { box-shadow: none; margin: 0; border-radius: 0; max-height: 1123px; overflow: hidden; }
             .no-print { display: none !important; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
           }
-          header, footer { display: none !important; }
           @media screen {
             body { padding: 32px 0 48px; }
             #sheet {
               width: 794px;
-              min-height: 1123px;
+              height: 1123px;
+              overflow: hidden;
               margin: 0 auto;
               background: #fff;
               box-shadow: 0 8px 48px rgba(0,0,0,.22);
               border-radius: 4px;
-              overflow: hidden;
+              display: flex;
+              flex-direction: column;
             }
           }
         `}</style>
