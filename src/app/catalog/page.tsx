@@ -86,7 +86,7 @@ export default async function CatalogPage({ searchParams }: PageProps) {
 
   return (
     <div style={{ paddingTop: 68, minHeight: "100vh", background: "var(--bg)" }}>
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "40px 40px 80px" }}>
+      <div className="rg-section-pad" style={{ maxWidth: 1280, margin: "0 auto", padding: "40px 40px 80px" }}>
         <div style={{ marginBottom: 32 }}>
           <p style={{ color: "var(--accent)", fontSize: 12, fontWeight: 600, letterSpacing: ".15em", textTransform: "uppercase", marginBottom: 8 }}>
             Недвижимость
@@ -99,7 +99,7 @@ export default async function CatalogPage({ searchParams }: PageProps) {
           )}
         </div>
 
-        <div style={{ display: "flex", gap: 32, alignItems: "flex-start" }}>
+        <div className="rg-catalog" style={{ display: "flex", gap: 32, alignItems: "flex-start" }}>
           <Suspense>
             <FilterPanel />
           </Suspense>
@@ -113,7 +113,7 @@ export default async function CatalogPage({ searchParams }: PageProps) {
               </div>
             ) : (
               <>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 20 }}>
+                <div className="rg-3" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 20 }}>
                   {items.map((obj) => (
                     <ObjectCard key={obj.id} obj={obj} />
                   ))}

@@ -27,7 +27,7 @@ export default async function FeaturedObjects() {
   if (items.length === 0) return null;
 
   return (
-    <section style={{ maxWidth: 1280, margin: "0 auto", padding: "80px 40px" }}>
+    <section className="rg-section-pad" style={{ maxWidth: 1280, margin: "0 auto", padding: "80px 40px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 40, flexWrap: "wrap", gap: 16 }}>
         <div>
           <p style={{ color: "var(--accent)", fontSize: 12, fontWeight: 600, letterSpacing: ".15em", textTransform: "uppercase", marginBottom: 8 }}>
@@ -43,7 +43,7 @@ export default async function FeaturedObjects() {
         }}>Весь каталог →</Link>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 20 }}>
+      <div className="rg-3" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 20 }}>
         {items.map((obj) => (
           <ObjectCard key={obj.id} obj={obj} />
         ))}

@@ -3,8 +3,8 @@ const creds = ["✦ RICS", "✦ РОО", "✦ Опыт с 2001 г."];
 export default function About() {
   return (
     <section id="about" style={{ background: "var(--surface2)" }}>
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "80px 40px" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 64, alignItems: "center" }}>
+      <div className="rg-section-pad" style={{ maxWidth: 1280, margin: "0 auto", padding: "80px 40px" }}>
+        <div className="rg-2col" style={{ display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 64, alignItems: "center" }}>
           <div>
             <p style={{ color: "var(--accent)", fontSize: 12, fontWeight: 600, letterSpacing: ".15em", textTransform: "uppercase", marginBottom: 8 }}>
               О компании

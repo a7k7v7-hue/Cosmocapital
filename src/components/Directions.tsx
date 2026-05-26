@@ -11,7 +11,7 @@ const directions = [
 
 export default function Directions() {
   return (
-    <section id="directions" style={{ maxWidth: 1280, margin: "0 auto", padding: "80px 40px" }}>
+    <section id="directions" className="rg-section-pad" style={{ maxWidth: 1280, margin: "0 auto", padding: "80px 40px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 40, flexWrap: "wrap", gap: 16 }}>
         <div>
           <p style={{ color: "var(--accent)", fontSize: 12, fontWeight: 600, letterSpacing: ".15em", textTransform: "uppercase", marginBottom: 8 }}>
@@ -28,7 +28,7 @@ export default function Directions() {
         }}>Все направления →</a>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 16 }}>
+      <div className="rg-4" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 16 }}>
         {directions.map((d) => (
           <div key={d.num} style={{
             background: d.featured ? "var(--accent)" : "var(--surface)",

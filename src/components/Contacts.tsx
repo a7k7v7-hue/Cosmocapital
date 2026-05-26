@@ -2,7 +2,7 @@ import ContactForm from "@/components/ContactForm";
 
 export default function Contacts() {
   return (
-    <section id="contacts" style={{ maxWidth: 1280, margin: "0 auto", padding: "80px 40px" }}>
+    <section id="contacts" className="rg-section-pad" style={{ maxWidth: 1280, margin: "0 auto", padding: "80px 40px" }}>
       <p style={{ color: "var(--accent)", fontSize: 12, fontWeight: 600, letterSpacing: ".15em", textTransform: "uppercase", marginBottom: 8 }}>
         Свяжитесь с нами
       </p>
@@ -10,7 +10,7 @@ export default function Contacts() {
         Оставьте <em>заявку</em>
       </h2>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1.5fr", gap: 56, alignItems: "start" }}>
+      <div className="rg-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1.5fr", gap: 56, alignItems: "start" }}>
         <div>
           <p style={{ fontSize: 14, color: "var(--muted)", lineHeight: 1.8, marginBottom: 20 }}>
             Наш менеджер свяжется с вами и подберёт оптимальное решение под ваши задачи.

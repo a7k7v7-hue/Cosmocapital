@@ -34,7 +34,7 @@ export default function Hero() {
       }} />
       <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right,rgba(10,16,28,.92) 45%,rgba(10,16,28,.5) 75%,rgba(10,16,28,.2))" }} />
 
-      <div style={{ position: "relative", maxWidth: 1280, margin: "0 auto", padding: "80px 40px", width: "100%" }}>
+      <div className="rg-hero-pad" style={{ position: "relative", maxWidth: 1280, margin: "0 auto", padding: "80px 40px", width: "100%" }}>
         <p style={{ color: "var(--accent)", fontSize: 12, fontWeight: 600, letterSpacing: ".18em", textTransform: "uppercase", marginBottom: 20 }}>
           Москва и Московская область · с 2006 года · RICS
         </p>

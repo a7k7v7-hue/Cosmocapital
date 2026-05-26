@@ -21,7 +21,7 @@ const serviceLinks = [
 export default function Footer() {
   return (
     <footer style={{ background: "#071540", color: "rgba(255,255,255,.55)" }}>
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "56px 40px", display: "grid", gridTemplateColumns: "1.5fr 1fr 1fr 1fr", gap: 40 }}>
+      <div className="rg-footer rg-section-pad" style={{ maxWidth: 1280, margin: "0 auto", padding: "56px 40px", display: "grid", gridTemplateColumns: "1.5fr 1fr 1fr 1fr", gap: 40 }}>
         <div>
           <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: ".1em", color: "#fff" }}>КОСМО КАПИТАЛ</div>
           <div style={{ fontSize: 12, marginTop: 3, opacity: .5 }}>Commercial Real Estate · Moscow</div>
