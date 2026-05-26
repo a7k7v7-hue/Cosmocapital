@@ -1,12 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createLeadSchema } from "@/lib/schemas";
-import { requireApiToken } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
-  const authError = requireApiToken(req);
-  if (authError) return authError;
-
   let body: unknown;
   try {
     body = await req.json();
