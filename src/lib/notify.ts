@@ -23,12 +23,16 @@ export async function notifyNewLead(data: {
   ].filter(Boolean).join("\n");
 
   try {
-    await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ chat_id: chatId, text: lines, parse_mode: "Markdown" }),
     });
-  } catch {
-    // не блокируем ответ пользователю если Telegram недоступен
+    if (!res.ok) {
+      const err = await res.text();
+      console.error("[notify] Telegram error:", err);
+    }
+  } catch (e) {
+    console.error("[notify] Telegram fetch failed:", e);
   }
 }

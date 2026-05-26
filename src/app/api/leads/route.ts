@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
     objectId ? prisma.object.findUnique({ where: { id: objectId }, select: { title: true } }) : Promise.resolve(null),
   ]);
 
-  notifyNewLead({ name, phone, email, message, source, objectTitle: object?.title });
+  await notifyNewLead({ name, phone, email, message, source, objectTitle: object?.title });
 
   return NextResponse.json(lead, { status: 201 });
 }
