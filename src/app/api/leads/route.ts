@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createLeadSchema } from "@/lib/schemas";
+import { notifyNewLead } from "@/lib/notify";
 
 export async function POST(req: NextRequest) {
   let body: unknown;
@@ -20,17 +21,22 @@ export async function POST(req: NextRequest) {
 
   const { name, phone, email, message, objectId, source } = parsed.data;
 
-  const lead = await prisma.lead.create({
-    data: {
-      name,
-      phone,
-      email: email || null,
-      message: message || null,
-      objectId: objectId || null,
-      source,
-    },
-    select: { id: true, createdAt: true },
-  });
+  const [lead, object] = await Promise.all([
+    prisma.lead.create({
+      data: {
+        name,
+        phone,
+        email: email || null,
+        message: message || null,
+        objectId: objectId || null,
+        source,
+      },
+      select: { id: true, createdAt: true },
+    }),
+    objectId ? prisma.object.findUnique({ where: { id: objectId }, select: { title: true } }) : Promise.resolve(null),
+  ]);
+
+  notifyNewLead({ name, phone, email, message, source, objectTitle: object?.title });
 
   return NextResponse.json(lead, { status: 201 });
 }
