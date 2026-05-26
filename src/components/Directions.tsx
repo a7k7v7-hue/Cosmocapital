@@ -1,3 +1,5 @@
+"use client";
+
 const directions = [
   {
     num: "01", label: "Офисная недвижимость",
