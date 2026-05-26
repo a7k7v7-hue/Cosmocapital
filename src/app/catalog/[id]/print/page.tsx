@@ -15,129 +15,175 @@ async function getObject(id: string) {
   }
 }
 
+// Strip boilerplate contact info that was baked into old DB descriptions
+function cleanDescription(raw: string): string {
+  return raw
+    .replace(/Контактная информация[\s\S]*$/i, "")
+    .replace(/\+7\s*\(903\)\s*537\s*44\s*88[\s\S]*$/g, "")
+    .replace(/info@cosm[oa]capital\.ru[\s\S]*$/gi, "")
+    .replace(/cosm[oa]capital\.ru[\s\S]*$/gi, "")
+    .trim()
+    .replace(/\n{3,}/g, "\n\n");
+}
+
 export default async function PrintPage({ params }: PageProps) {
   const { id } = await params;
   const obj = await getObject(id);
   if (!obj) notFound();
 
-  const specs = [
-    { label: "Тип сделки", value: TYPE_LABELS[obj.type] },
-    { label: "Площадь", value: `${obj.areaTotal} м²` },
-    obj.areaMin ? { label: "Мин. секция", value: `${obj.areaMin} м²` } : null,
-    obj.floor ? { label: "Этаж", value: `${obj.floor}${obj.floorsTotal ? `/${obj.floorsTotal}` : ""}` } : null,
-    { label: "Категория", value: CATEGORY_LABELS[obj.category] },
-    obj.metro ? { label: "Метро", value: `м. ${obj.metro}` } : null,
-    { label: "Местоположение", value: obj.address },
-  ].filter(Boolean) as { label: string; value: string }[];
+  const description = cleanDescription(obj.description);
 
-  const mainPhoto = obj.photos[0] ?? null;
-  const extraPhotos = obj.photos.slice(1, 5);
+  const specs: { label: string; value: string }[] = [
+    { label: "Тип", value: TYPE_LABELS[obj.type] },
+    { label: "Категория", value: CATEGORY_LABELS[obj.category] },
+    { label: "Общая площадь", value: `${obj.areaTotal.toLocaleString("ru-RU")} м²` },
+    ...(obj.areaMin ? [{ label: "Мин. секция", value: `${obj.areaMin} м²` }] : []),
+    ...(obj.floor ? [{ label: "Этаж", value: `${obj.floor}${obj.floorsTotal ? ` / ${obj.floorsTotal}` : ""}` }] : []),
+    ...(obj.metro ? [{ label: "Метро", value: `м. ${obj.metro}` }] : []),
+  ];
+
+  const [photo1, ...rest] = obj.photos;
+  const photos234 = rest.slice(0, 3);
+
+  // Accent color bar: dark blue with green stripe (brand)
+  const navy = "#0e2a5e";
+  const green = "#7cb342";
 
   return (
     <>
       <PrintTrigger />
-      <div style={{ fontFamily: "Arial, sans-serif", color: "#1a1f2e", background: "#fff", margin: 0, padding: 0 }}>
 
-        {/* ── HEADER ── */}
-        <div style={{
-          display: "flex", justifyContent: "space-between", alignItems: "center",
-          borderBottom: "3px solid #0e2a5e", paddingBottom: 12, marginBottom: 20,
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{
-              width: 44, height: 44, background: "#0e2a5e", borderRadius: 8,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              color: "#7cb342", fontWeight: 700, fontSize: 20, letterSpacing: -1,
-            }}>К</div>
-            <div>
-              <div style={{ fontWeight: 700, fontSize: 16, color: "#0e2a5e", letterSpacing: ".04em" }}>КОСМО КАПИТАЛ</div>
-              <div style={{ fontSize: 11, color: "#6b7080" }}>Коммерческая недвижимость</div>
-            </div>
+      {/* ── TOP BAR ── */}
+      <div style={{ background: navy, padding: "0 36px", display: "flex", justifyContent: "space-between", alignItems: "center", height: 64 }}>
+        {/* Logo */}
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{
+            width: 36, height: 36, background: green, borderRadius: 6,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 22, color: "#fff",
+          }}>К</div>
+          <div>
+            <div style={{ color: "#fff", fontWeight: 600, fontSize: 14, letterSpacing: ".06em" }}>КОСМО КАПИТАЛ</div>
+            <div style={{ color: "rgba(255,255,255,.55)", fontSize: 10, letterSpacing: ".04em" }}>КОММЕРЧЕСКАЯ НЕДВИЖИМОСТЬ</div>
           </div>
-          <div style={{ textAlign: "right" }}>
-            <div style={{ fontSize: 16, fontWeight: 700, color: "#0e2a5e" }}>+7 (903) 537 44 88</div>
-            <div style={{ fontSize: 11, color: "#6b7080" }}>info@cosmocapital.ru · cosmocapital.ru</div>
+        </div>
+        {/* Contact */}
+        <div style={{ textAlign: "right" }}>
+          <div style={{ color: "#fff", fontWeight: 600, fontSize: 15, letterSpacing: ".02em" }}>+7 (903) 537 44 88</div>
+          <div style={{ color: "rgba(255,255,255,.55)", fontSize: 10 }}>info@cosmocapital.ru · cosmocapital.ru</div>
+        </div>
+      </div>
+
+      {/* ── GREEN ACCENT LINE ── */}
+      <div style={{ height: 4, background: green }} />
+
+      {/* ── BODY ── */}
+      <div style={{ padding: "28px 36px 0" }}>
+
+        {/* Title block */}
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+            <span style={{
+              background: obj.type === "SALE" ? "#c53030" : green, color: "#fff",
+              fontSize: 10, fontWeight: 600, padding: "3px 10px", borderRadius: 3, letterSpacing: ".06em",
+            }}>{TYPE_LABELS[obj.type].toUpperCase()}</span>
+            <span style={{
+              background: "#f0ede6", color: "#6b7080",
+              fontSize: 10, fontWeight: 500, padding: "3px 10px", borderRadius: 3, letterSpacing: ".04em",
+            }}>{CATEGORY_LABELS[obj.category].toUpperCase()}</span>
+          </div>
+          <h1 style={{
+            fontFamily: "'Cormorant Garamond', serif",
+            fontSize: 28, fontWeight: 600, color: navy,
+            lineHeight: 1.25, marginBottom: 6,
+          }}>
+            {obj.title}
+          </h1>
+          <div style={{ fontSize: 12, color: "#6b7080", display: "flex", gap: 16, flexWrap: "wrap" }}>
+            <span>📍 {obj.address}</span>
+            {obj.metro && <span>🚇 м. {obj.metro}</span>}
           </div>
         </div>
 
-        {/* ── TITLE ── */}
-        <h1 style={{ fontSize: 22, fontWeight: 700, color: "#0e2a5e", marginBottom: 4, lineHeight: 1.3 }}>
-          {obj.title}
-        </h1>
-        <div style={{ fontSize: 13, color: "#6b7080", marginBottom: 20 }}>
-          📍 {obj.address}{obj.metro ? ` · 🚇 м. ${obj.metro}` : ""}
-        </div>
-
-        {/* ── PHOTOS ── */}
-        {mainPhoto && (
-          <div style={{ marginBottom: 20 }}>
-            {/* Main photo */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={mainPhoto}
-              alt={obj.title}
-              style={{ width: "100%", height: 320, objectFit: "cover", borderRadius: 8, display: "block" }}
-            />
-            {/* Extra photos row */}
-            {extraPhotos.length > 0 && (
-              <div style={{ display: "grid", gridTemplateColumns: `repeat(${extraPhotos.length}, 1fr)`, gap: 8, marginTop: 8 }}>
-                {extraPhotos.map((src, i) => (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img key={i} src={src} alt="" style={{ width: "100%", height: 140, objectFit: "cover", borderRadius: 6 }} />
-                ))}
+        {/* Photos */}
+        {photo1 && (
+          <div style={{ marginBottom: 22 }}>
+            {photos234.length > 0 ? (
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={photo1} alt={obj.title}
+                  style={{ width: "100%", height: 230, objectFit: "cover", borderRadius: 6, display: "block" }} />
+                <div style={{ display: "grid", gridTemplateRows: `repeat(${Math.min(photos234.length, 3)}, 1fr)`, gap: 8 }}>
+                  {photos234.map((src, i) => (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img key={i} src={src} alt=""
+                      style={{ width: "100%", height: photos234.length === 1 ? 230 : photos234.length === 2 ? 111 : 72, objectFit: "cover", borderRadius: 6, display: "block" }} />
+                  ))}
+                </div>
               </div>
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={photo1} alt={obj.title}
+                style={{ width: "100%", height: 280, objectFit: "cover", borderRadius: 6, display: "block" }} />
             )}
           </div>
         )}
 
-        {/* ── SPECS + DESCRIPTION ── */}
-        <div style={{ display: "grid", gridTemplateColumns: "280px 1fr", gap: 24, marginBottom: 24 }}>
+        {/* Two-column: specs | description */}
+        <div style={{ display: "grid", gridTemplateColumns: "220px 1fr", gap: 24, marginBottom: 28 }}>
 
-          {/* Key parameters */}
-          <div>
+          {/* Specs panel */}
+          <div style={{ background: "#f7f5f0", borderRadius: 8, padding: "16px 18px", border: "1px solid #e4dfd6" }}>
             <div style={{
-              background: "#f7f5f0", border: "1px solid #e4dfd6", borderRadius: 8, padding: 16,
+              fontSize: 9, fontWeight: 700, color: navy, letterSpacing: ".12em",
+              textTransform: "uppercase", marginBottom: 14, paddingBottom: 10,
+              borderBottom: `2px solid ${green}`,
             }}>
-              <div style={{ fontWeight: 700, fontSize: 13, color: "#0e2a5e", marginBottom: 12, textTransform: "uppercase", letterSpacing: ".08em" }}>
-                Ключевые параметры
+              Параметры объекта
+            </div>
+            {specs.map(({ label, value }) => (
+              <div key={label} style={{ marginBottom: 11 }}>
+                <div style={{ fontSize: 9, color: "#9098a9", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 2 }}>{label}</div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: "#1a1f2e" }}>{value}</div>
               </div>
-              {specs.map(({ label, value }) => (
-                <div key={label} style={{ marginBottom: 10, paddingBottom: 10, borderBottom: "1px solid #e4dfd6" }}>
-                  <div style={{ fontSize: 10, color: "#6b7080", textTransform: "uppercase", letterSpacing: ".06em" }}>{label}</div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: "#1a1f2e", marginTop: 2 }}>{value}</div>
-                </div>
-              ))}
-              <div style={{ marginTop: 4 }}>
-                <div style={{ fontSize: 10, color: "#6b7080", textTransform: "uppercase", letterSpacing: ".06em" }}>Цена</div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: "#7cb342", marginTop: 2 }}>По запросу</div>
-              </div>
+            ))}
+            {/* Divider */}
+            <div style={{ borderTop: "1px dashed #e4dfd6", margin: "12px 0" }} />
+            <div>
+              <div style={{ fontSize: 9, color: "#9098a9", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 2 }}>Цена</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: green }}>По запросу</div>
             </div>
           </div>
 
           {/* Description */}
           <div>
-            <div style={{ fontWeight: 700, fontSize: 13, color: "#0e2a5e", marginBottom: 10, textTransform: "uppercase", letterSpacing: ".08em" }}>
+            <div style={{
+              fontSize: 9, fontWeight: 700, color: navy, letterSpacing: ".12em",
+              textTransform: "uppercase", marginBottom: 14, paddingBottom: 10,
+              borderBottom: `2px solid ${green}`,
+            }}>
               Описание
             </div>
-            <div style={{ fontSize: 13, color: "#1a1f2e", lineHeight: 1.75, whiteSpace: "pre-line" }}>
-              {obj.description}
+            <div style={{ fontSize: 12, color: "#2a2f3e", lineHeight: 1.8, whiteSpace: "pre-line" }}>
+              {description}
             </div>
           </div>
         </div>
+      </div>
 
-        {/* ── FOOTER ── */}
-        <div style={{
-          borderTop: "2px solid #0e2a5e", paddingTop: 14, marginTop: 8,
-          display: "flex", justifyContent: "space-between", alignItems: "center",
-        }}>
-          <div style={{ fontSize: 12, color: "#6b7080" }}>
-            🌐 cosmocapital.ru/catalog/{obj.id}
-          </div>
-          <div style={{ fontSize: 12, fontWeight: 600, color: "#0e2a5e" }}>
-            +7 (903) 537 44 88 · info@cosmocapital.ru
-          </div>
+      {/* ── FOOTER ── */}
+      <div style={{
+        background: "#f7f5f0", borderTop: "1px solid #e4dfd6",
+        padding: "14px 36px",
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+      }}>
+        <div style={{ fontSize: 11, color: "#6b7080" }}>
+          cosmocapital.ru/catalog/{obj.id}
         </div>
-
+        <div style={{ display: "flex", gap: 20, fontSize: 11, color: navy, fontWeight: 500 }}>
+          <span>+7 (903) 537 44 88</span>
+          <span>info@cosmocapital.ru</span>
+        </div>
       </div>
     </>
   );

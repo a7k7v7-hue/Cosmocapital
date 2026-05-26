@@ -4,27 +4,44 @@ export default function PrintLayout({ children }: { children: React.ReactNode })
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap"
+          rel="stylesheet"
+        />
         <style>{`
-          * { box-sizing: border-box; margin: 0; padding: 0; }
-          body { font-family: Arial, Helvetica, sans-serif; background: #e8e8e8; }
-          @page { size: A4; margin: 15mm 14mm; }
+          *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+          body {
+            font-family: 'Inter', Arial, sans-serif;
+            background: #d8d8d8;
+            color: #1a1f2e;
+            -webkit-font-smoothing: antialiased;
+          }
+          @page {
+            size: A4;
+            margin: 0;
+          }
           @media print {
             body { background: #fff; }
-            #print-sheet { box-shadow: none !important; padding: 0 !important; }
+            #sheet { box-shadow: none; margin: 0; border-radius: 0; }
             .no-print { display: none !important; }
-            * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
           }
           @media screen {
-            #print-sheet {
-              max-width: 794px; margin: 20px auto; background: #fff;
-              padding: 28px 32px;
-              box-shadow: 0 4px 32px rgba(0,0,0,.18);
+            body { padding: 32px 0 48px; }
+            #sheet {
+              width: 794px;
+              min-height: 1123px;
+              margin: 0 auto;
+              background: #fff;
+              box-shadow: 0 8px 48px rgba(0,0,0,.22);
+              border-radius: 4px;
+              overflow: hidden;
             }
           }
         `}</style>
       </head>
       <body>
-        <div id="print-sheet">
+        <div id="sheet">
           {children}
         </div>
       </body>
