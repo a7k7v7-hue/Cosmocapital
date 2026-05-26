@@ -56,5 +56,7 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  return NextResponse.json({ ok: true, total: objects.length, updated, samples });
+  // Show raw excerpt of first object for diagnosis
+  const raw = objects[0]?.description?.slice(0, 300) ?? "";
+  return NextResponse.json({ ok: true, total: objects.length, updated, samples, rawSample: raw });
 }
