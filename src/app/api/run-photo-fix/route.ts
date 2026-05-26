@@ -18,6 +18,12 @@ export async function GET(req: NextRequest) {
   const objects = await prisma.object.findMany({ select: { id: true, photos: true } });
   const toUpdate = objects.filter((o) => o.photos.some((p) => p.includes("cosmocapital.ru")));
 
+  // Debug: sample of current URLs before migration
+  const sampleBefore: string[] = [];
+  for (const obj of objects.slice(0, 3)) {
+    sampleBefore.push(...obj.photos.slice(0, 1));
+  }
+
   let updated = 0;
   const sample: string[] = [];
   for (const obj of toUpdate) {
@@ -29,5 +35,12 @@ export async function GET(req: NextRequest) {
     updated++;
   }
 
-  return NextResponse.json({ ok: true, updatedObjects: updated, sampleUrls: sample });
+  return NextResponse.json({
+    ok: true,
+    totalObjects: objects.length,
+    toUpdateCount: toUpdate.length,
+    updatedObjects: updated,
+    sampleUrlsBefore: sampleBefore,
+    sampleUrls: sample,
+  });
 }
