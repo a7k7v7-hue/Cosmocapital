@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CATEGORY_LABELS, TYPE_LABELS } from "@/types/objects";
 import PhotoUpload from "@/components/admin/PhotoUpload";
+import TeaserButton from "@/components/admin/TeaserButton";
 
 type ObjectStatus = "ACTIVE" | "ARCHIVED";
 type ObjType = "RENT" | "SALE";
@@ -194,7 +195,7 @@ export default function ObjectForm({ initialData }: ObjectFormProps) {
 
       {error && <p className="text-red-500 text-sm">{error}</p>}
 
-      <div className="flex gap-3 pt-2">
+      <div className="flex gap-3 pt-2 flex-wrap items-center">
         <button type="submit" disabled={saving}
           className="bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition-colors">
           {saving ? "Сохранение..." : isEdit ? "Сохранить" : "Создать"}
@@ -203,6 +204,11 @@ export default function ObjectForm({ initialData }: ObjectFormProps) {
           className="border border-gray-200 hover:border-gray-300 text-gray-600 px-6 py-2.5 rounded-lg text-sm font-medium transition-colors">
           Отмена
         </button>
+        {isEdit && initialData && (
+          <span className="ml-auto">
+            <TeaserButton objectId={initialData.id} objectTitle={initialData.title} />
+          </span>
+        )}
       </div>
     </form>
   );

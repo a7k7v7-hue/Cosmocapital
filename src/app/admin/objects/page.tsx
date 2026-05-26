@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { TYPE_LABELS, CATEGORY_LABELS } from "@/types/objects";
+import TeaserButton from "@/components/admin/TeaserButton";
 
 async function getObjects() {
   try {
@@ -68,13 +69,14 @@ export default async function AdminObjectsPage() {
                       {obj.status === "ACTIVE" ? "Активен" : "Архив"}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-4 py-3 text-right whitespace-nowrap">
                     <Link
                       href={`/admin/objects/${obj.id}/edit`}
                       className="text-blue-600 hover:text-blue-800 text-xs font-medium"
                     >
                       Изменить
                     </Link>
+                    <TeaserButton objectId={obj.id} objectTitle={obj.title} />
                   </td>
                 </tr>
               ))}
