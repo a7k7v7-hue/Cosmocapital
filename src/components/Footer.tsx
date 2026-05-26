@@ -64,7 +64,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div style={{
+      <div className="rg-section-pad rg-footer-bar" style={{
         borderTop: "1px solid rgba(255,255,255,.07)", padding: "20px 40px",
         maxWidth: 1280, margin: "0 auto", display: "flex", justifyContent: "space-between",
         alignItems: "center", fontSize: 12,

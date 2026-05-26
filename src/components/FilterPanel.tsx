@@ -58,7 +58,7 @@ export default function FilterPanel() {
   };
 
   return (
-    <aside style={{ width: 240, flexShrink: 0, display: "flex", flexDirection: "column", gap: 24 }}>
+    <aside className="rg-catalog-sidebar" style={{ width: 240, flexShrink: 0, display: "flex", flexDirection: "column", gap: 24 }}>
       <div>
         <span style={labelStyle}>Тип сделки</span>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>

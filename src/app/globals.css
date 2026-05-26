@@ -65,3 +65,14 @@ a {
 @media (max-width: 400px) {
   .rg-4 { grid-template-columns: 1fr !important; }
 }
+
+@media (max-width: 900px) {
+  .rg-object-grid { grid-template-columns: 1fr !important; }
+  .rg-footer-bar { flex-wrap: wrap !important; gap: 12px !important; }
+  .rg-stats-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .rg-stats-inner { min-width: 640px; }
+}
+
+@media (max-width: 600px) {
+  .rg-footer-bar { font-size: 11px !important; }
+}

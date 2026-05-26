@@ -8,7 +8,8 @@ const stats = [
 
 export default function StatsBar() {
   return (
-    <div style={{ background: "var(--dark)", display: "flex", justifyContent: "center" }}>
+    <div className="rg-stats-wrap" style={{ background: "var(--dark)" }}>
+      <div className="rg-stats-inner" style={{ display: "flex", justifyContent: "center" }}>
       {stats.map((s, i) => (
         <div key={s.label} style={{
           flex: 1, maxWidth: 220, padding: "28px 20px", textAlign: "center",
@@ -22,6 +23,7 @@ export default function StatsBar() {
           </span>
         </div>
       ))}
+      </div>
     </div>
   );
 }

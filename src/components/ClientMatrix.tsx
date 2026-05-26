@@ -49,7 +49,7 @@ export default function ClientMatrix() {
 
   return (
     <section style={{ background: "var(--surface2)" }}>
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "80px 40px" }}>
+      <div className="rg-section-pad" style={{ maxWidth: 1280, margin: "0 auto", padding: "80px 40px" }}>
         <p style={{ color: "var(--accent)", fontSize: 12, fontWeight: 600, letterSpacing: ".15em", textTransform: "uppercase", marginBottom: 8 }}>
           Что мы делаем
         </p>
@@ -70,7 +70,7 @@ export default function ClientMatrix() {
           ))}
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+        <div className="rg-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
           {matrixData[active].map((text) => (
             <div key={text} style={{
               display: "flex", alignItems: "flex-start", gap: 12, padding: "14px 16px",
