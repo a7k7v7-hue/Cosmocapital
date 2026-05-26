@@ -83,7 +83,7 @@ export default function MapClient({ objects }: { objects: MapObject[] }) {
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 10 }}>
                 <span style={{ color: "#1a1f2e" }}>{obj.areaTotal} м²</span>
                 <span style={{ fontWeight: 600, color: "#0e2a5e" }}>
-                  {obj.price > 0 ? `${new Intl.NumberFormat("ru-RU").format(obj.price)} ₽` : "По запросу"}
+                  По запросу
                 </span>
               </div>
               <a
