@@ -15,9 +15,9 @@ services:
       - key: NEXTAUTH_SECRET
         generateValue: true
       - key: ADMIN_EMAIL
-        value: a7k7v7@gmail.com
+        sync: false
       - key: ADMIN_PASSWORD
-        value: Kosmo2026
+        sync: false
       - key: API_TOKEN
         generateValue: true
       - key: TELEGRAM_BOT_TOKEN
