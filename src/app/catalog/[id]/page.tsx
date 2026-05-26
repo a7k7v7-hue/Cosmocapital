@@ -76,9 +76,18 @@ export default async function ObjectPage({ params }: PageProps) {
               <h1 style={{ fontFamily: "var(--font-cormorant, serif)", fontSize: 32, fontWeight: 400, color: "var(--dark)", marginBottom: 16, lineHeight: 1.2 }}>
                 {obj.title}
               </h1>
-              <p style={{ color: "var(--muted)", lineHeight: 1.8, fontSize: 14, whiteSpace: "pre-line" }}>
-                {obj.description}
-              </p>
+              <div style={{ color: "var(--muted)", lineHeight: 1.85, fontSize: 14 }}>
+                {obj.description.split("\n\n").filter(Boolean).map((para, i) => (
+                  <p key={i} style={{ marginBottom: 12 }}>
+                    {para.split("\n").map((line, j) => (
+                      <span key={j}>
+                        {j > 0 && <br />}
+                        {line}
+                      </span>
+                    ))}
+                  </p>
+                ))}
+              </div>
             </div>
 
             <div style={{ background: "var(--surface)", borderRadius: 12, padding: 24, border: "1px solid var(--border)" }}>
