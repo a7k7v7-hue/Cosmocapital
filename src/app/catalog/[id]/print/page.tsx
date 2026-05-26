@@ -51,7 +51,7 @@ export default async function PrintPage({ params }: PageProps) {
 
   return (
     <>
-      <PrintTrigger />
+      <PrintTrigger title={obj.title} />
 
       {/* ── TOP BAR ── */}
       <div style={{ background: navy, padding: "0 36px", display: "flex", justifyContent: "space-between", alignItems: "center", height: 64 }}>

@@ -26,6 +26,7 @@ export default function PrintLayout({ children }: { children: React.ReactNode })
             .no-print { display: none !important; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
           }
+          header, footer { display: none !important; }
           @media screen {
             body { padding: 32px 0 48px; }
             #sheet {
