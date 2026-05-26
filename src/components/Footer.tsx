@@ -67,10 +67,20 @@ export default function Footer() {
       <div style={{
         borderTop: "1px solid rgba(255,255,255,.07)", padding: "20px 40px",
         maxWidth: 1280, margin: "0 auto", display: "flex", justifyContent: "space-between",
-        fontSize: 12, opacity: .4,
+        alignItems: "center", fontSize: 12,
       }}>
-        <span>© {year} Космо Капитал. Все права защищены.</span>
-        <span>RICS · РОО</span>
+        <span style={{ opacity: .4 }}>© {year} Космо Капитал. Все права защищены.</span>
+        <div style={{ display: "flex", gap: 20 }}>
+          <a href="/privacy" style={{ opacity: .4, transition: "opacity .2s" }}
+            onMouseEnter={e => (e.currentTarget as HTMLElement).style.opacity = "1"}
+            onMouseLeave={e => (e.currentTarget as HTMLElement).style.opacity = ".4"}
+          >Конфиденциальность</a>
+          <a href="/terms" style={{ opacity: .4, transition: "opacity .2s" }}
+            onMouseEnter={e => (e.currentTarget as HTMLElement).style.opacity = "1"}
+            onMouseLeave={e => (e.currentTarget as HTMLElement).style.opacity = ".4"}
+          >Соглашение</a>
+          <span style={{ opacity: .4 }}>RICS · РОО</span>
+        </div>
       </div>
     </footer>
   );

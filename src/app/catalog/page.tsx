@@ -19,6 +19,7 @@ async function fetchObjects(params: Record<string, string | string[] | undefined
   const category = str(params.category) as
     | "OFFICE" | "RETAIL" | "WAREHOUSE" | "FREE_PURPOSE" | "PRODUCTION" | "";
   const metro = str(params.metro);
+  const q = str(params.q);
   const areaMin = Number(str(params.areaMin)) || undefined;
   const areaMax = Number(str(params.areaMax)) || undefined;
   const priceMin = Number(str(params.priceMin)) || undefined;
@@ -31,6 +32,14 @@ async function fetchObjects(params: Record<string, string | string[] | undefined
     ...(type && { type }),
     ...(category && { category }),
     ...(metro && { metro: { contains: metro, mode: "insensitive" } }),
+    ...(q && {
+      OR: [
+        { title: { contains: q, mode: "insensitive" } },
+        { address: { contains: q, mode: "insensitive" } },
+        { metro: { contains: q, mode: "insensitive" } },
+        { description: { contains: q, mode: "insensitive" } },
+      ],
+    }),
     ...(areaMin !== undefined || areaMax !== undefined
       ? { areaTotal: { gte: areaMin, lte: areaMax } }
       : {}),
@@ -64,6 +73,7 @@ export const metadata = {
 
 export default async function CatalogPage({ searchParams }: PageProps) {
   const params = await searchParams;
+  const q = typeof params.q === "string" ? params.q : "";
 
   let data = { items: [] as ObjectListItem[], total: 0, page: 1, totalPages: 0 };
   try {
@@ -82,7 +92,7 @@ export default async function CatalogPage({ searchParams }: PageProps) {
             Недвижимость
           </p>
           <h1 style={{ fontFamily: "var(--font-cormorant, serif)", fontSize: 40, fontWeight: 400, color: "var(--dark)" }}>
-            Каталог объектов
+            {q ? `Поиск: ${q}` : "Каталог объектов"}
           </h1>
           {total > 0 && (
             <p style={{ color: "var(--muted)", marginTop: 4, fontSize: 14 }}>Найдено: {total} объектов</p>

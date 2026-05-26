@@ -3,7 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const tabs = ["Все объекты", "Офисы", "Склады", "Ритейл", "Инвестиции", "Земля"];
+const tabs: { label: string; category: string }[] = [
+  { label: "Все объекты", category: "" },
+  { label: "Офисы", category: "OFFICE" },
+  { label: "Склады", category: "WAREHOUSE" },
+  { label: "Ритейл", category: "RETAIL" },
+  { label: "Своб. назначение", category: "FREE_PURPOSE" },
+  { label: "Производство", category: "PRODUCTION" },
+];
 
 export default function Hero() {
   const [activeTab, setActiveTab] = useState(0);
@@ -13,6 +20,7 @@ export default function Hero() {
   function handleSearch() {
     const params = new URLSearchParams();
     if (query) params.set("q", query);
+    if (tabs[activeTab].category) params.set("category", tabs[activeTab].category);
     router.push(`/catalog${params.toString() ? "?" + params.toString() : ""}`);
   }
 
@@ -44,14 +52,14 @@ export default function Hero() {
         <div style={{ maxWidth: 680 }}>
           <div style={{ display: "flex", gap: 4, marginBottom: 10, flexWrap: "wrap" }}>
             {tabs.map((tab, i) => (
-              <button key={tab} onClick={() => setActiveTab(i)} style={{
+              <button key={tab.label} onClick={() => setActiveTab(i)} style={{
                 padding: "7px 16px", borderRadius: 20, fontSize: 13, cursor: "pointer",
                 background: activeTab === i ? "#fff" : "transparent",
                 color: activeTab === i ? "var(--dark)" : "rgba(255,255,255,.5)",
                 border: activeTab === i ? "1px solid #fff" : "1px solid rgba(255,255,255,.15)",
                 fontWeight: activeTab === i ? 500 : 400,
                 transition: "var(--trans)",
-              }}>{tab}</button>
+              }}>{tab.label}</button>
             ))}
           </div>
           <div style={{
