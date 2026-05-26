@@ -107,9 +107,22 @@ export default async function ObjectPage({ params }: PageProps) {
 
               <LeadForm objectId={obj.id} source="object_page" />
 
-              <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid var(--border)", textAlign: "center" }}>
+              <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: 10, alignItems: "center" }}>
                 <a href="tel:+79035374488" style={{ color: "var(--accent)", fontWeight: 600, fontSize: 14 }}>
                   +7 (903) 537-44-88
+                </a>
+                <a
+                  href={`/catalog/${obj.id}/print`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: 6,
+                    border: "1px solid var(--border)", borderRadius: 6, padding: "7px 14px",
+                    fontSize: 12, color: "var(--muted)", textDecoration: "none",
+                    transition: "var(--trans)",
+                  }}
+                >
+                  📄 Скачать PDF
                 </a>
               </div>
             </div>
