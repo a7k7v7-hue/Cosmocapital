@@ -5,6 +5,20 @@ import PhotoGallery from "@/components/PhotoGallery";
 import LeadForm from "@/components/LeadForm";
 import { TYPE_LABELS, CATEGORY_LABELS } from "@/types/objects";
 
+// Split flat description into paragraphs at sentence boundaries
+function formatDescription(text: string): string[] {
+  if (text.includes("\n")) return text.split(/\n{2,}/).filter(Boolean);
+  // Split on ". " before uppercase Cyrillic/Latin, but not abbreviations like кв.м.
+  const sentences = text.split(/(?<=[а-яёА-ЯЁa-zA-Z\d])\.\s+(?=[А-ЯЁA-Z\d])/);
+  const paras: string[] = [];
+  // Group 2–3 sentences per paragraph
+  for (let i = 0; i < sentences.length; i += 2) {
+    const chunk = sentences.slice(i, i + 2).join(". ");
+    if (chunk.trim()) paras.push(chunk.trim() + (chunk.endsWith(".") ? "" : "."));
+  }
+  return paras.length ? paras : [text];
+}
+
 interface PageProps {
   params: Promise<{ id: string }>;
 }
@@ -77,15 +91,8 @@ export default async function ObjectPage({ params }: PageProps) {
                 {obj.title}
               </h1>
               <div style={{ color: "var(--muted)", lineHeight: 1.85, fontSize: 14 }}>
-                {obj.description.split("\n\n").filter(Boolean).map((para, i) => (
-                  <p key={i} style={{ marginBottom: 12 }}>
-                    {para.split("\n").map((line, j) => (
-                      <span key={j}>
-                        {j > 0 && <br />}
-                        {line}
-                      </span>
-                    ))}
-                  </p>
+                {formatDescription(obj.description).map((para, i) => (
+                  <p key={i} style={{ marginBottom: 14 }}>{para}</p>
                 ))}
               </div>
             </div>
