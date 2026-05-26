@@ -56,12 +56,13 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  // Find any object with HTML-like content for diagnosis
-  const withHtml = objects.find(o =>
-    o.description.includes("&") || o.description.includes("<") || o.description.includes(">")
+  const withEntities = objects.filter(o =>
+    /&(ndash|mdash|laquo|raquo|nbsp|amp|lt|gt|quot);/i.test(o.description)
   );
+  const allLengths = objects.map(o => ({ id: o.id, len: o.description.length, hasBr: o.description.includes("\n") }));
   return NextResponse.json({
     ok: true, total: objects.length, updated, samples,
-    htmlFound: withHtml ? { id: withHtml.id, excerpt: withHtml.description.slice(0, 300) } : null,
+    withEntities: withEntities.map(o => ({ id: o.id, excerpt: o.description.slice(0, 200) })),
+    stats: { withNewlines: allLengths.filter(x => x.hasBr).length, maxLen: Math.max(...allLengths.map(x => x.len)) },
   });
 }
