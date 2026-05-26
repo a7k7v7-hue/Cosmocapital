@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import MigratePhotosButton from "@/components/admin/MigratePhotosButton";
 
 async function getStats() {
   try {
@@ -43,7 +44,7 @@ export default async function AdminDashboard() {
           </Link>
         ))}
       </div>
-      <div className="flex gap-4">
+      <div className="flex gap-4 mb-6">
         <Link
           href="/admin/objects/new"
           className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors"
@@ -57,6 +58,7 @@ export default async function AdminDashboard() {
           Смотреть заявки
         </Link>
       </div>
+      <MigratePhotosButton />
     </div>
   );
 }
