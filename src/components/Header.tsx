@@ -7,6 +7,7 @@ const navLinks = [
   { label: "О компании", href: "#about" },
   { label: "Направления", href: "#directions" },
   { label: "Каталог объектов", href: "/catalog" },
+  { label: "Карта", href: "/map" },
   { label: "Контакты", href: "#contacts" },
 ];
 

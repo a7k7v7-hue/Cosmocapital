@@ -58,7 +58,7 @@ export default async function AdminObjectsPage() {
                   <td className="px-4 py-3 text-gray-600">{CATEGORY_LABELS[obj.category]}</td>
                   <td className="px-4 py-3 text-right text-gray-600">{obj.areaTotal} м²</td>
                   <td className="px-4 py-3 text-right text-gray-800 font-medium">
-                    {new Intl.NumberFormat("ru-RU").format(obj.price)} ₽
+                    {obj.price > 0 ? `${new Intl.NumberFormat("ru-RU").format(obj.price)} ₽` : "По запросу"}
                   </td>
                   <td className="px-4 py-3 text-center">
                     <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${

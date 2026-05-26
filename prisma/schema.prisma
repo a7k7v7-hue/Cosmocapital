@@ -48,6 +48,8 @@ model Object {
   price        Float
   pricePerSqm  Float?
   photos       String[]
+  lat          Float?
+  lng          Float?
   status       ObjectStatus   @default(ACTIVE)
   featured     Boolean        @default(false)
   createdAt    DateTime       @default(now())
