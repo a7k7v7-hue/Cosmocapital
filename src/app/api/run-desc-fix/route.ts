@@ -56,7 +56,12 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  // Show raw excerpt of first object for diagnosis
-  const raw = objects[0]?.description?.slice(0, 300) ?? "";
-  return NextResponse.json({ ok: true, total: objects.length, updated, samples, rawSample: raw });
+  // Find any object with HTML-like content for diagnosis
+  const withHtml = objects.find(o =>
+    o.description.includes("&") || o.description.includes("<") || o.description.includes(">")
+  );
+  return NextResponse.json({
+    ok: true, total: objects.length, updated, samples,
+    htmlFound: withHtml ? { id: withHtml.id, excerpt: withHtml.description.slice(0, 300) } : null,
+  });
 }
