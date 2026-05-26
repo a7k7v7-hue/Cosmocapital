@@ -2,9 +2,13 @@ import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 function credentialsMatch(email: string, pass: string): boolean {
-  const e = process.env.ADMIN_EMAIL ?? "";
-  const p = process.env.ADMIN_PASSWORD ?? "";
-  return e.length > 0 && p.length > 0 && email === e && pass === p;
+  const e = (process.env.ADMIN_EMAIL ?? "").trim();
+  const p = (process.env.ADMIN_PASSWORD ?? "").trim();
+  const ok = e.length > 0 && p.length > 0 && email.trim() === e && pass === p;
+  if (!ok) {
+    console.error(`[auth] login failed: email_match=${email.trim() === e} pass_len=${pass.length} expected_len=${p.length}`);
+  }
+  return ok;
 }
 
 const loginPage = { signIn: "/admin/login" };
