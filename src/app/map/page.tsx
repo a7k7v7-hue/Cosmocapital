@@ -1,9 +1,8 @@
-import dynamic from "next/dynamic";
 import { prisma } from "@/lib/prisma";
 import Header from "@/components/Header";
+import MapWrapper from "@/components/MapWrapper";
 
-const MapClient = dynamic(() => import("@/components/MapClient"), { ssr: false });
-
+export const dynamic = "force-dynamic";
 export const metadata = { title: "Карта объектов — Космо Капитал" };
 
 export default async function MapPage() {
@@ -55,7 +54,7 @@ export default async function MapPage() {
 
         {/* Map fills the rest */}
         <div style={{ flex: 1, position: "relative" }}>
-          <MapClient objects={objects} />
+          <MapWrapper objects={objects} />
         </div>
       </div>
     </>

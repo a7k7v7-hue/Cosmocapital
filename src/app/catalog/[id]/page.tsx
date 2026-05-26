@@ -45,11 +45,7 @@ export default async function ObjectPage({ params }: PageProps) {
     { label: "Общая площадь", value: `${obj.areaTotal} м²` },
     obj.areaMin ? { label: "Минимальная секция", value: `${obj.areaMin} м²` } : null,
     obj.floor ? { label: "Этаж", value: `${obj.floor}${obj.floorsTotal ? ` из ${obj.floorsTotal}` : ""}` } : null,
-    {
-      label: obj.type === "RENT" ? "Стоимость аренды" : "Цена",
-      value: obj.price > 0 ? `${new Intl.NumberFormat("ru-RU").format(obj.price)} ${obj.type === "RENT" ? "₽/мес" : "₽"}` : "По запросу",
-    },
-    obj.pricePerSqm && obj.pricePerSqm > 0 ? { label: "Цена за м²", value: `${new Intl.NumberFormat("ru-RU").format(obj.pricePerSqm)} ₽` } : null,
+    { label: obj.type === "RENT" ? "Стоимость аренды" : "Цена", value: "По запросу" },
   ].filter(Boolean) as { label: string; value: string }[];
 
   return (

@@ -98,17 +98,6 @@ export default function FilterPanel() {
         </div>
       </div>
 
-      <div>
-        <span style={labelStyle}>Цена, ₽</span>
-        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <input type="number" placeholder="от" defaultValue={get("priceMin")}
-            onBlur={(e) => update("priceMin", e.target.value)} style={inputStyle} />
-          <span style={{ color: "var(--muted)", flexShrink: 0 }}>-</span>
-          <input type="number" placeholder="до" defaultValue={get("priceMax")}
-            onBlur={(e) => update("priceMax", e.target.value)} style={inputStyle} />
-        </div>
-      </div>
-
       <button onClick={() => router.push(pathname)} style={{
         fontSize: 13, color: "var(--muted)", cursor: "pointer",
         background: "none", border: "none", textAlign: "left", fontFamily: "inherit",

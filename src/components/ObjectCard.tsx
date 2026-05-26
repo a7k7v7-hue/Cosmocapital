@@ -77,7 +77,7 @@ export default function ObjectCard({ obj }: { obj: ObjectListItem }) {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 8, borderTop: "1px solid var(--border)" }}>
           <span style={{ fontSize: 12, color: "var(--muted)" }}>{formatArea(obj.areaTotal, obj.areaMin)}</span>
           <span style={{ fontSize: 13, color: "var(--accent)", fontWeight: 600 }}>
-            {obj.price > 0 ? formatPrice(obj.type, obj.price) : "По запросу"}
+            По запросу
           </span>
         </div>
       </div>

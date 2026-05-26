@@ -32,6 +32,7 @@ function buildTeaser(obj: {
   if (obj.floor) {
     params.push(`• Этаж: ${obj.floor}${obj.floorsTotal ? `/${obj.floorsTotal}` : ""}`);
   }
+  params.push("• Цена: по запросу");
   lines.push(...params);
   lines.push("");
 
