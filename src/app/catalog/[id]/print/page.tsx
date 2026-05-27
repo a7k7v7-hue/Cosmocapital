@@ -33,7 +33,8 @@ export default async function PrintPage({ params }: PageProps) {
   const obj = await getObject(id);
   if (!obj) notFound();
 
-  const description = cleanDescription(obj.description).slice(0, 700);
+  const description = cleanDescription(obj.description).slice(0, 860);
+  const paragraphs = description.split("\n\n").filter(Boolean);
 
   const specs: { label: string; value: string }[] = [
     { label: "Тип", value: TYPE_LABELS[obj.type] },
@@ -45,43 +46,44 @@ export default async function PrintPage({ params }: PageProps) {
     { label: "Стоимость", value: "По запросу" },
   ];
 
-  const [photo1, photo2] = obj.photos;
+  // Show up to 6 photos, 3 per row
+  const photos = obj.photos.slice(0, 6);
+  const cols = photos.length <= 2 ? photos.length || 1 : 3;
+  const photoH = photos.length <= 1 ? 210 : photos.length === 2 ? 188 : photos.length <= 3 ? 172 : 128;
 
   return (
     <>
-      <PrintTrigger title={obj.title} />
+      <PrintTrigger title={`${obj.title} — ${obj.address}`} />
 
-      {/* HEADER */}
+      {/* HEADER — white, clean */}
       <div style={{
-        background: navy, height: 52,
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "0 32px",
+        padding: "14px 32px",
+        borderBottom: `3px solid ${green}`,
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        background: "#fff",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{
-            width: 30, height: 30, background: green, borderRadius: 5,
+            width: 32, height: 32, background: green, borderRadius: 6,
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 18, color: "#fff",
+            fontFamily: "'Cormorant Garamond', serif", fontWeight: 700, fontSize: 20, color: "#fff",
           }}>К</div>
           <div>
-            <div style={{ color: "#fff", fontWeight: 600, fontSize: 13, letterSpacing: ".07em" }}>КОСМО КАПИТАЛ</div>
-            <div style={{ color: "rgba(255,255,255,.5)", fontSize: 9, letterSpacing: ".05em" }}>КОММЕРЧЕСКАЯ НЕДВИЖИМОСТЬ</div>
+            <div style={{ color: navy, fontWeight: 700, fontSize: 13, letterSpacing: ".07em" }}>КОСМО КАПИТАЛ</div>
+            <div style={{ color: "#9098a9", fontSize: 9, letterSpacing: ".04em" }}>КОММЕРЧЕСКАЯ НЕДВИЖИМОСТЬ</div>
           </div>
         </div>
         <div style={{ textAlign: "right" }}>
-          <div style={{ color: "#fff", fontWeight: 600, fontSize: 13 }}>+7 (903) 537 44 88</div>
-          <div style={{ color: "rgba(255,255,255,.5)", fontSize: 9 }}>info@cosmocapital.ru · cosmocapital.ru</div>
+          <div style={{ color: navy, fontWeight: 600, fontSize: 13 }}>+7 (903) 537 44 88</div>
+          <div style={{ color: "#9098a9", fontSize: 9 }}>info@cosmocapital.ru · cosmocapital.ru</div>
         </div>
       </div>
 
-      {/* ACCENT LINE */}
-      <div style={{ height: 3, background: green }} />
-
       {/* BODY */}
-      <div style={{ padding: "22px 32px 0", flex: 1 }}>
+      <div style={{ padding: "18px 32px 0" }}>
 
         {/* Title block */}
-        <div style={{ marginBottom: 16 }}>
+        <div style={{ marginBottom: 14 }}>
           <div style={{ display: "flex", gap: 6, marginBottom: 7 }}>
             <span style={{
               background: obj.type === "SALE" ? "#c53030" : green, color: "#fff",
@@ -103,47 +105,37 @@ export default async function PrintPage({ params }: PageProps) {
           </div>
         </div>
 
-        {/* Two-column main content */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 200px", gap: 20 }}>
-
-          {/* LEFT: photos + description */}
-          <div>
-            {/* Photos */}
-            {photo1 && (
-              <div style={{ display: "grid", gridTemplateColumns: photo2 ? "1fr 1fr" : "1fr", gap: 8, marginBottom: 16 }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={photo1} alt={obj.title}
-                  style={{ width: "100%", height: 190, objectFit: "cover", borderRadius: 6, display: "block" }} />
-                {photo2 && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={photo2} alt=""
-                    style={{ width: "100%", height: 190, objectFit: "cover", borderRadius: 6, display: "block" }} />
-                )}
-              </div>
-            )}
-
-            {/* Description */}
-            <div>
-              <div style={{
-                fontSize: 8, fontWeight: 700, color: navy, letterSpacing: ".12em",
-                textTransform: "uppercase", marginBottom: 8, paddingBottom: 7,
-                borderBottom: `2px solid ${green}`,
-              }}>Описание</div>
-              <div style={{ fontSize: 11, color: "#2a2f3e", lineHeight: 1.75, whiteSpace: "pre-line" }}>
-                {description}
-              </div>
-            </div>
+        {/* Photos grid */}
+        {photos.length > 0 && (
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: `repeat(${cols}, 1fr)`,
+            gap: 7,
+            marginBottom: 14,
+          }}>
+            {photos.map((src, i) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img key={i} src={src} alt={i === 0 ? obj.title : ""}
+                style={{ width: "100%", height: photoH, objectFit: "cover", borderRadius: 5, display: "block" }} />
+            ))}
           </div>
+        )}
 
-          {/* RIGHT: specs */}
-          <div style={{ background: "#f7f5f0", borderRadius: 8, padding: "16px 16px", border: "1px solid #e4dfd6", alignSelf: "start" }}>
+        {/* Two-column: specs | description */}
+        <div style={{ display: "grid", gridTemplateColumns: "185px 1fr", gap: 18 }}>
+
+          {/* Specs */}
+          <div style={{
+            background: "#f7f5f0", borderRadius: 7, padding: "13px 15px",
+            border: "1px solid #e4dfd6", alignSelf: "start",
+          }}>
             <div style={{
               fontSize: 8, fontWeight: 700, color: navy, letterSpacing: ".12em",
-              textTransform: "uppercase", marginBottom: 12, paddingBottom: 8,
+              textTransform: "uppercase", marginBottom: 11, paddingBottom: 8,
               borderBottom: `2px solid ${green}`,
             }}>Параметры</div>
             {specs.map(({ label, value }) => (
-              <div key={label} style={{ marginBottom: 10 }}>
+              <div key={label} style={{ marginBottom: 9 }}>
                 <div style={{ fontSize: 8, color: "#9098a9", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 2 }}>{label}</div>
                 <div style={{
                   fontSize: label === "Стоимость" ? 13 : 11,
@@ -153,13 +145,28 @@ export default async function PrintPage({ params }: PageProps) {
               </div>
             ))}
           </div>
+
+          {/* Description */}
+          <div>
+            <div style={{
+              fontSize: 8, fontWeight: 700, color: navy, letterSpacing: ".12em",
+              textTransform: "uppercase", marginBottom: 11, paddingBottom: 8,
+              borderBottom: `2px solid ${green}`,
+            }}>Описание</div>
+            {paragraphs.map((para, i) => (
+              <p key={i} style={{
+                fontSize: 11, color: "#2a2f3e", lineHeight: 1.78,
+                marginBottom: i < paragraphs.length - 1 ? 9 : 0,
+              }}>{para}</p>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* FOOTER */}
       <div style={{
         background: "#f7f5f0", borderTop: "1px solid #e4dfd6",
-        padding: "10px 32px", marginTop: 20,
+        padding: "9px 32px", marginTop: 16,
         display: "flex", justifyContent: "space-between", alignItems: "center",
       }}>
         <div style={{ fontSize: 10, color: "#9098a9" }}>cosmocapital.ru/catalog/{obj.id}</div>
