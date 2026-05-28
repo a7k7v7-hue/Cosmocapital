@@ -57,7 +57,7 @@ export default async function AdminObjectsPage({ searchParams }: PageProps) {
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold text-gray-900">
           Объекты
-          <span className="ml-2 text-base font-normal text-gray-400">{objects.length}</span>
+          <span className="ml-2 text-sm font-normal text-gray-400">({objects.length})</span>
         </h1>
         <Link
           href="/admin/objects/new"

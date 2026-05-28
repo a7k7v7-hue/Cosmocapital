@@ -51,8 +51,8 @@ export default function ObjectsFilter({ counts }: {
     >
       {label}
       {count !== undefined && (
-        <span className={`ml-1.5 px-1.5 py-0.5 rounded-full text-[10px] ${
-          active(key, value) ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-500"
+        <span className={`ml-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-xs font-semibold ${
+          active(key, value) ? "bg-white text-blue-600" : "bg-gray-300 text-gray-600"
         }`}>
           {count}
         </span>
