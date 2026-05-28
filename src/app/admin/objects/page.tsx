@@ -1,26 +1,64 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { prisma } from "@/lib/prisma";
 import { TYPE_LABELS, CATEGORY_LABELS } from "@/types/objects";
 import TeaserButton from "@/components/admin/TeaserButton";
+import ObjectsFilter from "@/components/admin/ObjectsFilter";
 
-async function getObjects() {
+interface PageProps {
+  searchParams: Promise<{ type?: string; category?: string; status?: string; q?: string }>;
+}
+
+async function getData(filters: { type?: string; category?: string; status?: string; q?: string }) {
   try {
-    return await prisma.object.findMany({
-      orderBy: [{ status: "asc" }, { createdAt: "desc" }],
-      select: { id: true, title: true, type: true, category: true, price: true, status: true, featured: true, areaTotal: true },
-    });
+    const where: Record<string, unknown> = {};
+    if (filters.type === "RENT" || filters.type === "SALE") where.type = filters.type;
+    if (["OFFICE","RETAIL","WAREHOUSE","FREE_PURPOSE","PRODUCTION"].includes(filters.category ?? ""))
+      where.category = filters.category;
+    if (filters.status === "ACTIVE") where.status = "ACTIVE";
+    else if (filters.status === "ARCHIVED") where.status = "ARCHIVED";
+    if (filters.q) {
+      where.OR = [
+        { title: { contains: filters.q, mode: "insensitive" } },
+        { address: { contains: filters.q, mode: "insensitive" } },
+      ];
+    }
+
+    const [objects, all] = await Promise.all([
+      prisma.object.findMany({
+        where,
+        orderBy: [{ status: "asc" }, { createdAt: "desc" }],
+        select: { id: true, title: true, type: true, category: true, price: true, status: true, featured: true, areaTotal: true },
+      }),
+      prisma.object.findMany({
+        select: { type: true, category: true },
+      }),
+    ]);
+
+    const catCounts: Record<string, number> = {};
+    const typeCounts: Record<string, number> = {};
+    for (const o of all) {
+      catCounts[o.category] = (catCounts[o.category] ?? 0) + 1;
+      typeCounts[o.type] = (typeCounts[o.type] ?? 0) + 1;
+    }
+
+    return { objects, counts: { category: catCounts, type: typeCounts, total: all.length } };
   } catch {
-    return [];
+    return { objects: [], counts: { category: {}, type: {}, total: 0 } };
   }
 }
 
-export default async function AdminObjectsPage() {
-  const objects = await getObjects();
+export default async function AdminObjectsPage({ searchParams }: PageProps) {
+  const filters = await searchParams;
+  const { objects, counts } = await getData(filters);
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Объекты</h1>
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-2xl font-bold text-gray-900">
+          Объекты
+          <span className="ml-2 text-base font-normal text-gray-400">{objects.length}</span>
+        </h1>
         <Link
           href="/admin/objects/new"
           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
@@ -29,9 +67,13 @@ export default async function AdminObjectsPage() {
         </Link>
       </div>
 
+      <Suspense>
+        <ObjectsFilter counts={counts} />
+      </Suspense>
+
       {objects.length === 0 ? (
         <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center text-gray-400">
-          Объектов пока нет
+          Объектов не найдено
         </div>
       ) : (
         <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
