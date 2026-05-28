@@ -58,7 +58,7 @@ export default function Header() {
         </nav>
 
         <div className="hidden md:flex" style={{ alignItems: "center", gap: 16, marginLeft: "auto" }}>
-          <a href="tel:+79035374488" style={{ fontSize: 14, fontWeight: 600, color: "var(--dark)", letterSpacing: ".01em" }}>
+          <a href="tel:+79035374488" style={{ fontSize: 14, fontWeight: 600, color: "var(--dark)", letterSpacing: ".01em", whiteSpace: "nowrap" }}>
             +7 (903) 537-44-88
           </a>
           <a href="#contacts" style={{
