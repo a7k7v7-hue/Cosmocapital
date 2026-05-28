@@ -39,10 +39,10 @@ export default function Header() {
           </div>
         </a>
 
-        <nav className="hidden md:flex" style={{ flex: 1, gap: 4 }}>
+        <nav className="hidden lg:flex" style={{ flex: 1, gap: 4, overflow: "hidden" }}>
           {navLinks.map((link) => (
             <a key={link.href} href={link.href} style={{
-              padding: "7px 14px", borderRadius: 6, fontSize: "13.5px",
+              padding: "7px 10px", borderRadius: 6, fontSize: "13px",
               color: "var(--muted)", transition: "var(--trans)", whiteSpace: "nowrap",
             }}
             onMouseEnter={e => {
@@ -57,7 +57,7 @@ export default function Header() {
           ))}
         </nav>
 
-        <div className="hidden md:flex" style={{ alignItems: "center", gap: 16, marginLeft: "auto" }}>
+        <div className="hidden lg:flex" style={{ alignItems: "center", gap: 16, marginLeft: "auto", flexShrink: 0 }}>
           <a href="tel:+79035374488" style={{ fontSize: 14, fontWeight: 600, color: "var(--dark)", letterSpacing: ".01em", whiteSpace: "nowrap" }}>
             +7 (903) 537-44-88
           </a>
@@ -68,7 +68,7 @@ export default function Header() {
         </div>
 
         <button
-          className="md:hidden"
+          className="lg:hidden"
           onClick={() => setMenuOpen(!menuOpen)}
           style={{ padding: 8, color: "var(--muted)", background: "none", border: "none", cursor: "pointer", marginLeft: "auto" }}
         >
