@@ -10,7 +10,10 @@ export async function notifyNewLead(data: {
 }) {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
-  if (!token || !chatId) return;
+  if (!token || !chatId) {
+    console.warn("[notify] TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID not set, skipping");
+    return;
+  }
 
   const lines = [
     "📩 *Новая заявка*",
