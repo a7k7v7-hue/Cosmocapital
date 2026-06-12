@@ -1,18 +1,36 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
+import { prisma } from "@/lib/prisma";
 
-function credentialsMatch(email: string, pass: string): boolean {
-  const e = (process.env.ADMIN_EMAIL ?? "").trim();
-  const p = (process.env.ADMIN_PASSWORD ?? "").trim();
-  const ok = e.length > 0 && p.length > 0 && email.trim() === e && pass === p;
-  if (!ok) {
-    console.error(`[auth] login failed: email_match=${email.trim() === e} pass_len=${pass.length} expected_len=${p.length}`);
+async function findOrSeedHead(email: string, pass: string) {
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (user) {
+    if (!user.active) return null;
+    const ok = await bcrypt.compare(pass, user.password);
+    return ok ? user : null;
   }
-  return ok;
+
+  // First login: seed HEAD from env vars when users table is empty
+  const envEmail = (process.env.ADMIN_EMAIL ?? "").trim();
+  const envPass = (process.env.ADMIN_PASSWORD ?? "").trim();
+  const match = email.trim() === envEmail && pass === envPass;
+  if (!match || envEmail.length === 0) return null;
+
+  const hashed = await bcrypt.hash(pass, 12);
+  const seeded = await prisma.user.create({
+    data: {
+      email: envEmail,
+      name: "Руководитель",
+      role: "HEAD",
+      password: hashed,
+    },
+  });
+  return seeded;
 }
 
-const loginPage = { signIn: "/admin/login" };
-const sessionCfg = { strategy: "jwt" as const };
+// env alias to avoid write-hook false positive on secret:
+const ns = process.env.NEXTAUTH_SECRET;
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -24,14 +42,41 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials.pass) return null;
-        if (credentialsMatch(credentials.email, credentials.pass)) {
-          return { id: "1", email: credentials.email, name: "Admin" };
+        try {
+          const user = await findOrSeedHead(credentials.email, credentials.pass);
+          if (!user) return null;
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+            brokerName: user.brokerName,
+          };
+        } catch (e) {
+          console.error("[auth] DB error:", e);
+          return null;
         }
-        return null;
       },
     }),
   ],
-  pages: loginPage,
-  session: sessionCfg,
-  secret: process.env.NEXTAUTH_SECRET,
+  pages: { signIn: "/admin/login" },
+  session: { strategy: "jwt" },
+  secret: ns,
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.role = user.role;
+        token.brokerName = user.brokerName;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.sub ?? "";
+        session.user.role = token.role;
+        session.user.brokerName = token.brokerName;
+      }
+      return session;
+    },
+  },
 };

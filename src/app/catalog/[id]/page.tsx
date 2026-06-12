@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import PhotoGallery from "@/components/PhotoGallery";
@@ -65,11 +66,11 @@ export default async function ObjectPage({ params }: PageProps) {
   return (
     <div style={{ paddingTop: 68, minHeight: "100vh", background: "var(--bg)" }}>
       <div className="rg-section-pad" style={{ maxWidth: 1280, margin: "0 auto", padding: "40px 40px 80px" }}>
-        <a href="/catalog" style={{
+        <Link href="/catalog" style={{
           display: "inline-flex", alignItems: "center", gap: 6,
           fontSize: 13, color: "var(--muted)", marginBottom: 24,
           transition: "var(--trans)",
-        }}>← Назад к каталогу</a>
+        }}>← Назад к каталогу</Link>
 
         <div className="rg-object-grid" style={{ display: "grid", gridTemplateColumns: "1fr 360px", gap: 32 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>

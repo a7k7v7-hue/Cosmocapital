@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import Header from "@/components/Header";
 import MapWrapper from "@/components/MapWrapper";
@@ -47,9 +48,9 @@ export default async function MapPage() {
           }}>
             {objects.length}
           </span>
-          <a href="/catalog" style={{ marginLeft: "auto", fontSize: 13, color: "var(--muted)" }}>
+          <Link href="/catalog" style={{ marginLeft: "auto", fontSize: 13, color: "var(--muted)" }}>
             ← Каталог
-          </a>
+          </Link>
         </div>
 
         {/* Map fills the rest */}

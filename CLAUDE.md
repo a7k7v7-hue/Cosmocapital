@@ -1,5 +1,7 @@
 # Космокапитал - навигация
 
+> Полная карта всех бизнесов владельца: `C:\My Project\PROJECTS.md`
+
 ## Что это за проект
 
 Корпоративный сайт компании **Космокапитал**.
@@ -10,7 +12,9 @@
 - **Framework**: Next.js 15 (App Router), `src/` директория
 - **Styles**: Tailwind CSS v4
 - **Lang**: TypeScript
-- **Deploy**: Vercel (планируется)
+- **Deploy**: Render (cosmacapital.onrender.com)
+- **DB**: Railway Postgres (через Prisma ORM)
+- **Storage**: Supabase Storage (фото объектов)
 
 ## Структура
 

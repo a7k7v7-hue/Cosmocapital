@@ -56,6 +56,7 @@ model Object {
   updatedAt    DateTime       @updatedAt
 
   leads        Lead[]
+  deals        Deal[]
 
   @@map("objects")
 }
@@ -85,4 +86,121 @@ model Service {
   active      Boolean  @default(true)
 
   @@map("services")
+}
+
+// ─── Users / Roles ──────────────────────────────────────────────────────────
+
+enum UserRole {
+  HEAD
+  SENIOR_BROKER
+  BROKER
+  RESEARCH
+}
+
+model User {
+  id         String   @id @default(uuid())
+  email      String   @unique
+  password   String
+  name       String
+  role       UserRole @default(BROKER)
+  brokerName String?
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+
+  @@map("users")
+}
+
+// ─── CRM Pipeline ───────────────────────────────────────────────────────────
+
+enum DealSegment {
+  BIG_BOX
+  LIGHT_INDUSTRIAL
+  LAND
+}
+
+enum DealType {
+  LI_RENT
+  LI_SALE_LAND
+  BB_RENT
+  BB_SALE_LAND
+  BTS_SLB_MANDATE
+}
+
+enum LossReason {
+  CHOSE_ANOTHER_WITHOUT_US
+  WENT_TO_COMPETITOR
+  POSTPONED_DECISION
+  BUDGET_NOT_CONFIRMED
+  OWNER_REMOVED_OBJECT
+  OTHER
+}
+
+enum ActivityType {
+  CALL
+  MEETING
+  VIEWING
+  PROPOSAL_SENT
+  EMAIL
+  OTHER
+}
+
+model Deal {
+  id                 String      @id @default(uuid())
+  brokerName         String
+  segment            DealSegment
+  dealType           DealType
+  clientName         String
+  objectDescription  String
+  areaSqm            Float?
+  stage              Int         @default(1)
+  expectedGci        Float
+  expectedCloseDate  DateTime?
+  lastStageChangedAt DateTime    @default(now())
+  isLost             Boolean     @default(false)
+  isClosed           Boolean     @default(false)
+  actualGci          Float?
+  lossReason         LossReason?
+  lossComment        String?
+  lprContact         String?
+  leadSource         String?
+  nextActionDate     DateTime?
+  nextActionDesc     String?
+  notes                String?
+  qualificationData    Json?
+  reEngagementDate     DateTime?
+  objectId             String?
+  linkedObject         Object?     @relation(fields: [objectId], references: [id], onDelete: SetNull)
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+
+  stageChanges StageChange[]
+  activities   DealActivity[]
+
+  @@map("deals")
+}
+
+model StageChange {
+  id        String   @id @default(uuid())
+  dealId    String
+  deal      Deal     @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  fromStage Int
+  toStage   Int
+  comment   String?
+  changedBy String?
+  changedAt DateTime @default(now())
+
+  @@map("deal_stage_changes")
+}
+
+model DealActivity {
+  id           String       @id @default(uuid())
+  dealId       String
+  deal         Deal         @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  type         ActivityType
+  description  String
+  activityDate DateTime     @default(now())
+  createdBy    String?
+  createdAt    DateTime     @default(now())
+
+  @@map("deal_activities")
 }

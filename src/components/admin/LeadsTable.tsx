@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment, useState } from "react";
+import Link from "next/link";
 
 type LeadStatus = "NEW" | "IN_WORK" | "DONE" | "REJECTED";
 
@@ -31,7 +32,7 @@ const STATUS_COLORS: Record<LeadStatus, string> = {
   REJECTED: "bg-gray-100 text-gray-500",
 };
 
-export default function LeadsTable({ leads: initial }: { leads: Lead[] }) {
+export default function LeadsTable({ leads: initial, canEdit = true }: { leads: Lead[]; canEdit?: boolean }) {
   const [leads, setLeads] = useState(initial);
   const [expanded, setExpanded] = useState<string | null>(null);
 
@@ -93,15 +94,21 @@ export default function LeadsTable({ leads: initial }: { leads: Lead[] }) {
                   })}
                 </td>
                 <td className="px-4 py-3 text-center">
-                  <select
-                    value={lead.status}
-                    onChange={(e) => updateStatus(lead.id, e.target.value as LeadStatus)}
-                    className={`text-xs font-medium px-2 py-1 rounded-full border-0 outline-none cursor-pointer ${STATUS_COLORS[lead.status]}`}
-                  >
-                    {(Object.keys(STATUS_LABELS) as LeadStatus[]).map((s) => (
-                      <option key={s} value={s}>{STATUS_LABELS[s]}</option>
-                    ))}
-                  </select>
+                  {canEdit ? (
+                    <select
+                      value={lead.status}
+                      onChange={(e) => updateStatus(lead.id, e.target.value as LeadStatus)}
+                      className={`text-xs font-medium px-2 py-1 rounded-full border-0 outline-none cursor-pointer ${STATUS_COLORS[lead.status]}`}
+                    >
+                      {(Object.keys(STATUS_LABELS) as LeadStatus[]).map((s) => (
+                        <option key={s} value={s}>{STATUS_LABELS[s]}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <span className={`text-xs font-medium px-2 py-1 rounded-full ${STATUS_COLORS[lead.status]}`}>
+                      {STATUS_LABELS[lead.status]}
+                    </span>
+                  )}
                 </td>
                 <td className="px-4 py-3 text-right">
                   <button
@@ -133,11 +140,22 @@ export default function LeadsTable({ leads: initial }: { leads: Lead[] }) {
                         <textarea
                           defaultValue={lead.notes ?? ""}
                           rows={2}
-                          onBlur={(e) => saveNotes(lead.id, e.target.value)}
-                          placeholder="Добавить заметку..."
-                          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 resize-none"
+                          readOnly={!canEdit}
+                          onBlur={(e) => canEdit && saveNotes(lead.id, e.target.value)}
+                          placeholder={canEdit ? "Добавить заметку..." : ""}
+                          className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-blue-400 transition-colors resize-none read-only:bg-gray-50"
                         />
                       </div>
+                      {canEdit && (
+                        <div className="sm:col-span-2 pt-1">
+                          <Link
+                            href={`/admin/pipeline/new?clientName=${encodeURIComponent(lead.name)}&lprContact=${encodeURIComponent(lead.phone)}&leadSource=${encodeURIComponent("Сайт")}`}
+                            className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-800 border border-blue-200 hover:border-blue-400 px-3 py-1.5 rounded-xl transition-colors"
+                          >
+                            + Создать сделку из заявки
+                          </Link>
+                        </div>
+                      )}
                     </div>
                   </td>
                 </tr>

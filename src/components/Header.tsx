@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 const navLinks = [
   { label: "Главная", href: "/" },
@@ -26,7 +27,7 @@ export default function Header() {
         maxWidth: 1280, margin: "0 auto", padding: "0 40px",
         height: 68, display: "flex", alignItems: "center", gap: 32,
       }}>
-        <a href="/" style={{ display: "flex", alignItems: "center", gap: 11 }}>
+        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 11 }}>
           <div style={{
             width: 36, height: 36, background: "var(--dark)", borderRadius: 6,
             display: "flex", alignItems: "center", justifyContent: "center",
@@ -37,7 +38,7 @@ export default function Header() {
             <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: ".12em", color: "var(--dark)" }}>КОСМО КАПИТАЛ</span>
             <span style={{ fontSize: 10, fontWeight: 400, letterSpacing: ".18em", color: "var(--muted)" }}>COMMERCIAL REAL ESTATE</span>
           </div>
-        </a>
+        </Link>
 
         <nav className="hidden lg:flex" style={{ flex: 1, gap: 4, overflow: "hidden" }}>
           {navLinks.map((link) => (

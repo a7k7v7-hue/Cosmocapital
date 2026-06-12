@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
+import { requireSessionUser } from "@/lib/session";
 
 const TYPE_RU: Record<string, string> = { RENT: "АРЕНДА", SALE: "ПРОДАЖА" };
 const CAT_RU: Record<string, string> = {
@@ -50,8 +49,8 @@ export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await getServerSession(authOptions);
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const user = await requireSessionUser();
+  if (user instanceof NextResponse) return user;
 
   const { id } = await params;
   const obj = await prisma.object.findUnique({

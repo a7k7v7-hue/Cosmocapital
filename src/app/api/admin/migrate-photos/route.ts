@@ -1,16 +1,17 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@supabase/supabase-js";
+import { requireSessionUser } from "@/lib/session";
+import { canManageUsers } from "@/lib/roles";
 
 const OLD_DOMAIN = "cosmocapital.ru";
 const CONCURRENCY = 15;
 const PHOTO_TIMEOUT_MS = 12000;
 
 export async function POST() {
-  const session = await getServerSession(authOptions);
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const user = await requireSessionUser();
+  if (user instanceof NextResponse) return user;
+  if (!canManageUsers(user.role)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? process.env.SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;

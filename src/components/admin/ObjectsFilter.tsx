@@ -43,7 +43,7 @@ export default function ObjectsFilter({ counts }: {
     <button
       key={value || "_all"}
       onClick={() => set(key, value)}
-      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
+      className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-colors whitespace-nowrap ${
         active(key, value)
           ? "bg-blue-600 text-white"
           : "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -68,7 +68,7 @@ export default function ObjectsFilter({ counts }: {
         placeholder="Поиск по названию или адресу..."
         defaultValue={sp.get("q") ?? ""}
         onChange={(e) => set("q", e.target.value)}
-        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400/30 focus:border-blue-400 transition-colors"
       />
 
       {/* Category pills */}

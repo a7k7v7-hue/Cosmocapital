@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 const directions = [
   {
     num: "01", label: "Офисная недвижимость",
@@ -72,10 +74,10 @@ export default function Directions() {
               8 направлений экспертизы
             </h2>
           </div>
-          <a href="/catalog" style={{
+          <Link href="/catalog" style={{
             background: "var(--dark)", color: "#fff", padding: "10px 22px",
             borderRadius: "var(--r)", fontSize: 13, fontWeight: 600, letterSpacing: ".02em",
-          }}>Каталог объектов →</a>
+          }}>Каталог объектов →</Link>
         </div>
 
         <div className="rg-4" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 16 }}>

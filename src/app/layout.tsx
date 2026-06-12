@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 import "./globals.css";
 
@@ -17,6 +17,10 @@ const dmSans = DM_Sans({
   display: "swap",
 });
 
+export const viewport: Viewport = {
+  colorScheme: "light",
+};
+
 export const metadata: Metadata = {
   title: {
     default: "Космо Капитал - Коммерческая недвижимость Москвы",
@@ -33,7 +37,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru" className={`${cormorant.variable} ${dmSans.variable}`}>
+    <html lang="ru" className={`${cormorant.variable} ${dmSans.variable}`} style={{ colorScheme: "light" }}>
       <body style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>{children}</body>
     </html>
   );

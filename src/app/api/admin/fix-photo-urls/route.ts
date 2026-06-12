@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
+import { requireSessionUser } from "@/lib/session";
+import { canManageUsers } from "@/lib/roles";
 
 const OLD_PREFIX = "https://cosmocapital.ru/uploads/object/";
 const NEW_PREFIX = "/photos/migrated/";
@@ -14,12 +14,10 @@ function toLocalPath(oldUrl: string): string {
   return NEW_PREFIX + base.toLowerCase();
 }
 
-export async function POST(req: Request) {
-  const session = await getServerSession(authOptions);
-  const adminPw = process.env.ADMIN_PASSWORD;
-  const headerPw = req.headers.get("x-admin-pw");
-  const authorized = session || (adminPw && headerPw === adminPw);
-  if (!authorized) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+export async function POST() {
+  const user = await requireSessionUser();
+  if (user instanceof NextResponse) return user;
+  if (!canManageUsers(user.role)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const objects = await prisma.object.findMany({ select: { id: true, photos: true } });
   const toUpdate = objects.filter((o) => o.photos.some((p) => p.includes("cosmocapital.ru")));

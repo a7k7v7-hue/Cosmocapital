@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { requireSessionUser } from "@/lib/session";
+import { canEdit } from "@/lib/roles";
 
 const patchSchema = z.object({
   type: z.enum(["RENT", "SALE"]).optional(),
@@ -22,18 +22,13 @@ const patchSchema = z.object({
   featured: z.coerce.boolean().optional(),
 });
 
-async function requireAdmin() {
-  const session = await getServerSession(authOptions);
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  return null;
-}
-
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const denied = await requireAdmin();
-  if (denied) return denied;
+  const user = await requireSessionUser();
+  if (user instanceof NextResponse) return user;
+  if (!canEdit(user.role)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const { id } = await params;
   const body = await req.json().catch(() => null);
@@ -50,8 +45,9 @@ export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const denied = await requireAdmin();
-  if (denied) return denied;
+  const user = await requireSessionUser();
+  if (user instanceof NextResponse) return user;
+  if (!canEdit(user.role)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const { id } = await params;
   await prisma.object.update({ where: { id }, data: { status: "ARCHIVED" } });

@@ -72,7 +72,7 @@ export default function TeaserButton({ objectId, objectTitle }: Props) {
                   readOnly
                   value={text}
                   rows={14}
-                  className="w-full text-sm font-mono bg-gray-50 border border-gray-200 rounded-lg p-3 resize-none focus:outline-none"
+                  className="w-full text-sm font-mono bg-gray-50 border border-gray-200 rounded-xl p-3 resize-none focus:outline-none"
                   onClick={(e) => (e.target as HTMLTextAreaElement).select()}
                 />
               )}
@@ -82,13 +82,15 @@ export default function TeaserButton({ objectId, objectTitle }: Props) {
               <button
                 onClick={copy}
                 disabled={loading}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white py-2.5 rounded-lg text-sm font-medium transition-colors"
+                className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white py-2.5 rounded-xl text-sm font-medium transition-colors"
               >
-                {copied ? "✓ Скопировано" : "Копировать"}
+                {copied ? (
+                  <span className="inline-flex items-center gap-1.5"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Скопировано</span>
+                ) : "Копировать"}
               </button>
               <button
                 onClick={() => setOpen(false)}
-                className="px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors"
+                className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition-colors"
               >
                 Закрыть
               </button>

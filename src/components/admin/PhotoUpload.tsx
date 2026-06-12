@@ -65,8 +65,8 @@ export default function PhotoUpload({ photos, onChange }: PhotoUploadProps) {
                   </button>
                 )}
                 <button type="button" onClick={() => remove(url)}
-                  className="text-white text-xs bg-red-500/80 px-1.5 py-0.5 rounded">
-                  ✕
+                  className="text-white bg-red-500/80 p-0.5 rounded flex items-center justify-center">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 </button>
               </div>
               {i === 0 && (
