@@ -9,7 +9,7 @@ async function getLeads() {
   try {
     return await prisma.lead.findMany({
       orderBy: { createdAt: "desc" },
-      include: { object: { select: { title: true } } },
+      include: { object: { select: { id: true, title: true } } },
     });
   } catch {
     return [];

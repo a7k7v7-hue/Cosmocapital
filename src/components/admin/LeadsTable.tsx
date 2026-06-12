@@ -15,7 +15,7 @@ interface Lead {
   status: LeadStatus;
   notes: string | null;
   createdAt: Date;
-  object: { title: string } | null;
+  object: { id: string; title: string } | null;
 }
 
 const STATUS_LABELS: Record<LeadStatus, string> = {
@@ -147,12 +147,26 @@ export default function LeadsTable({ leads: initial, canEdit = true }: { leads: 
                         />
                       </div>
                       {canEdit && (
-                        <div className="sm:col-span-2 pt-1">
+                        <div className="sm:col-span-2 pt-1 flex items-center gap-3">
                           <Link
-                            href={`/admin/pipeline/new?clientName=${encodeURIComponent(lead.name)}&lprContact=${encodeURIComponent(lead.phone)}&leadSource=${encodeURIComponent("Сайт")}`}
+                            href={(() => {
+                              const p = new URLSearchParams({
+                                leadId: lead.id,
+                                clientName: lead.name,
+                                lprContact: [lead.phone, lead.email].filter(Boolean).join(", "),
+                                leadSource: lead.source || "Сайт",
+                              });
+                              if (lead.object) {
+                                p.set("objectId", lead.object.id);
+                                p.set("objectDesc", lead.object.title);
+                              }
+                              if (lead.message) p.set("message", lead.message);
+                              return `/admin/pipeline/new?${p.toString()}`;
+                            })()}
                             className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-800 border border-blue-200 hover:border-blue-400 px-3 py-1.5 rounded-xl transition-colors"
                           >
-                            + Создать сделку из заявки
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                            Перенести в CRM
                           </Link>
                         </div>
                       )}

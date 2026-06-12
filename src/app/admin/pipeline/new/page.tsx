@@ -7,13 +7,29 @@ import { canEdit } from "@/lib/roles";
 export default async function NewDealPage({
   searchParams,
 }: {
-  searchParams: Promise<{ clientName?: string; lprContact?: string; leadSource?: string }>;
+  searchParams: Promise<{
+    clientName?: string;
+    lprContact?: string;
+    leadSource?: string;
+    leadId?: string;
+    objectId?: string;
+    objectDesc?: string;
+    message?: string;
+  }>;
 }) {
   const [user, sp] = await Promise.all([getSessionUser(), searchParams]);
   if (!user || !canEdit(user.role)) redirect("/admin/pipeline");
 
   const prefill = sp.clientName
-    ? { clientName: sp.clientName, lprContact: sp.lprContact ?? "", leadSource: sp.leadSource ?? "" }
+    ? {
+        clientName: sp.clientName,
+        lprContact: sp.lprContact ?? "",
+        leadSource: sp.leadSource ?? "",
+        leadId: sp.leadId,
+        objectId: sp.objectId,
+        objectDesc: sp.objectDesc,
+        message: sp.message,
+      }
     : undefined;
 
   return (

@@ -28,7 +28,15 @@ interface DealFormProps {
     notes: string | null;
     objectId: string | null;
   };
-  prefill?: { clientName?: string; lprContact?: string; leadSource?: string };
+  prefill?: {
+    clientName?: string;
+    lprContact?: string;
+    leadSource?: string;
+    leadId?: string;
+    objectId?: string;
+    objectDesc?: string;
+    message?: string;
+  };
   mode: "create" | "edit";
 }
 
@@ -51,7 +59,9 @@ export default function DealForm({ initialData, prefill, mode }: DealFormProps) 
   const [segment, setSegment] = useState(initialData?.segment ?? "BIG_BOX");
   const [dealType, setDealType] = useState(initialData?.dealType ?? "BB_RENT");
   const [clientName, setClientName] = useState(initialData?.clientName ?? prefill?.clientName ?? "");
-  const [objectDescription, setObjectDescription] = useState(initialData?.objectDescription ?? "");
+  const [objectDescription, setObjectDescription] = useState(
+    initialData?.objectDescription ?? prefill?.objectDesc ?? ""
+  );
   const [areaSqm, setAreaSqm] = useState<string>(initialData?.areaSqm?.toString() ?? "");
   const [expectedGci, setExpectedGci] = useState<string>(
     initialData?.expectedGci?.toString() ?? DEFAULT_GCI["BB_RENT"].toString()
@@ -65,8 +75,10 @@ export default function DealForm({ initialData, prefill, mode }: DealFormProps) 
     toDateInputValue(initialData?.nextActionDate)
   );
   const [nextActionDesc, setNextActionDesc] = useState(initialData?.nextActionDesc ?? "");
-  const [notes, setNotes] = useState(initialData?.notes ?? "");
-  const [objectId, setObjectId] = useState<string | null>(initialData?.objectId ?? null);
+  const [notes, setNotes] = useState(initialData?.notes ?? prefill?.message ?? "");
+  const [objectId, setObjectId] = useState<string | null>(
+    initialData?.objectId ?? prefill?.objectId ?? null
+  );
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -130,6 +142,15 @@ export default function DealForm({ initialData, prefill, mode }: DealFormProps) 
       }
 
       const deal = await res.json();
+
+      if (prefill?.leadId) {
+        await fetch(`/api/admin/leads/${prefill.leadId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: "IN_WORK" }),
+        });
+      }
+
       router.push(`/admin/pipeline/${deal.id}`);
       router.refresh();
     } catch {
