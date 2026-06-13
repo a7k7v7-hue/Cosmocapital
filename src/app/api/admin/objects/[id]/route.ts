@@ -6,7 +6,7 @@ import { canEdit } from "@/lib/roles";
 
 const patchSchema = z.object({
   type: z.enum(["RENT", "SALE"]).optional(),
-  category: z.enum(["OFFICE", "RETAIL", "WAREHOUSE", "FREE_PURPOSE", "PRODUCTION", "LAND"]).optional(),
+  category: z.enum(["OFFICE", "RETAIL", "WAREHOUSE", "FREE_PURPOSE", "PRODUCTION", "LAND", "READY_BUSINESS"]).optional(),
   title: z.string().min(3).max(200).optional(),
   description: z.string().min(10).optional(),
   address: z.string().min(5).optional(),

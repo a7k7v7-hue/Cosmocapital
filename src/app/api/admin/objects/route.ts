@@ -6,7 +6,7 @@ import { canEdit } from "@/lib/roles";
 
 const objectSchema = z.object({
   type: z.enum(["RENT", "SALE"]),
-  category: z.enum(["OFFICE", "RETAIL", "WAREHOUSE", "FREE_PURPOSE", "PRODUCTION", "LAND"]),
+  category: z.enum(["OFFICE", "RETAIL", "WAREHOUSE", "FREE_PURPOSE", "PRODUCTION", "LAND", "READY_BUSINESS"]),
   title: z.string().min(3).max(200),
   description: z.string().min(10),
   address: z.string().min(5),

@@ -20,6 +20,7 @@ enum ObjectCategory {
   FREE_PURPOSE
   PRODUCTION
   LAND
+  READY_BUSINESS
 }
 
 enum ObjectStatus {

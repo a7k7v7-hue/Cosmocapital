@@ -5,7 +5,8 @@ export type ObjectCategory =
   | "WAREHOUSE"
   | "FREE_PURPOSE"
   | "PRODUCTION"
-  | "LAND";
+  | "LAND"
+  | "READY_BUSINESS";
 
 export interface ObjectListItem {
   id: string;
@@ -41,4 +42,5 @@ export const CATEGORY_LABELS: Record<ObjectCategory, string> = {
   FREE_PURPOSE: "Свободное назначение",
   PRODUCTION: "Производство",
   LAND: "Земельный участок",
+  READY_BUSINESS: "Готовый бизнес",
 };

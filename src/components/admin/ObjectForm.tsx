@@ -8,7 +8,7 @@ import TeaserButton from "@/components/admin/TeaserButton";
 
 type ObjectStatus = "ACTIVE" | "ARCHIVED";
 type ObjType = "RENT" | "SALE";
-type ObjCategory = "OFFICE" | "RETAIL" | "WAREHOUSE" | "FREE_PURPOSE" | "PRODUCTION" | "LAND";
+type ObjCategory = "OFFICE" | "RETAIL" | "WAREHOUSE" | "FREE_PURPOSE" | "PRODUCTION" | "LAND" | "READY_BUSINESS";
 
 interface InitialData {
   id: string;
