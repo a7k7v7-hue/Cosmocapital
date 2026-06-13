@@ -2,30 +2,57 @@
 
 import { useState } from "react";
 
+const TYPE_RU: Record<string, string> = { RENT: "АРЕНДА", SALE: "ПРОДАЖА" };
+const CAT_RU: Record<string, string> = {
+  OFFICE: "Офис",
+  RETAIL: "Торговое",
+  WAREHOUSE: "Склад",
+  FREE_PURPOSE: "Свободное назначение",
+  PRODUCTION: "Производство",
+};
+
 interface Props {
   objectId: string;
   objectTitle: string;
+  type: string;
+  category: string;
+  address: string;
+  metro: string | null;
+  areaTotal: number;
+  areaMin: number | null;
+  floor: number | null;
+  floorsTotal: number | null;
+  description: string;
 }
 
-export default function TeaserButton({ objectId, objectTitle }: Props) {
+function buildTeaser(p: Omit<Props, "objectId" | "objectTitle">): string {
+  const lines: string[] = [];
+  lines.push(`${TYPE_RU[p.type] ?? p.type} | ${CAT_RU[p.category] ?? p.category} — ${p.areaTotal} кв.м`);
+  lines.push("");
+  lines.push(`📍 ${p.address}`);
+  if (p.metro) lines.push(`🚇 м. ${p.metro}`);
+  lines.push("");
+  lines.push(`• Площадь: ${p.areaTotal} кв.м`);
+  if (p.areaMin) lines.push(`• Мин. секция: ${p.areaMin} кв.м`);
+  if (p.floor) lines.push(`• Этаж: ${p.floor}${p.floorsTotal ? `/${p.floorsTotal}` : ""}`);
+  lines.push("• Цена: по запросу");
+  if (p.description.trim()) {
+    lines.push("");
+    lines.push(p.description.trim());
+  }
+  lines.push("");
+  lines.push("──────────────────");
+  lines.push("📞 +7 (903) 537 44 88");
+  lines.push("✉️ info@cosmacapital.ru");
+  return lines.join("\n");
+}
+
+export default function TeaserButton(props: Props) {
+  const { objectTitle } = props;
   const [open, setOpen] = useState(false);
-  const [text, setText] = useState("");
-  const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  async function openTeaser() {
-    setOpen(true);
-    if (text) return;
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/admin/objects/${objectId}/teaser`);
-      const data = await res.json();
-      setText(data.text ?? "Ошибка генерации");
-    } catch {
-      setText("Ошибка загрузки тизера");
-    }
-    setLoading(false);
-  }
+  const text = open ? buildTeaser(props) : "";
 
   async function copy() {
     await navigator.clipboard.writeText(text);
@@ -36,7 +63,7 @@ export default function TeaserButton({ objectId, objectTitle }: Props) {
   return (
     <>
       <button
-        onClick={openTeaser}
+        onClick={() => setOpen(true)}
         className="text-green-600 hover:text-green-800 text-xs font-medium ml-3"
         title="Сгенерировать тизер для клиента"
       >
@@ -56,36 +83,32 @@ export default function TeaserButton({ objectId, objectTitle }: Props) {
               </div>
               <button
                 onClick={() => setOpen(false)}
-                className="text-gray-400 hover:text-gray-600 text-lg leading-none"
+                className="text-gray-400 hover:text-gray-600 flex items-center"
               >
-                ×
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
               </button>
             </div>
 
             <div className="px-5 py-4">
-              {loading ? (
-                <div className="h-48 flex items-center justify-center text-gray-400 text-sm">
-                  Генерация...
-                </div>
-              ) : (
-                <textarea
-                  readOnly
-                  value={text}
-                  rows={14}
-                  className="w-full text-sm font-mono bg-gray-50 border border-gray-200 rounded-xl p-3 resize-none focus:outline-none"
-                  onClick={(e) => (e.target as HTMLTextAreaElement).select()}
-                />
-              )}
+              <textarea
+                readOnly
+                value={text}
+                rows={14}
+                className="w-full text-sm font-mono bg-gray-50 border border-gray-200 rounded-xl p-3 resize-none focus:outline-none"
+                onClick={(e) => (e.target as HTMLTextAreaElement).select()}
+              />
             </div>
 
             <div className="px-5 pb-4 flex gap-3">
               <button
                 onClick={copy}
-                disabled={loading}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white py-2.5 rounded-xl text-sm font-medium transition-colors"
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl text-sm font-medium transition-colors"
               >
                 {copied ? (
-                  <span className="inline-flex items-center gap-1.5"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Скопировано</span>
+                  <span className="inline-flex items-center justify-center gap-1.5">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    Скопировано
+                  </span>
                 ) : "Копировать"}
               </button>
               <button

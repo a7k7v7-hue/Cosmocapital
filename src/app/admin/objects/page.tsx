@@ -30,7 +30,12 @@ async function getData(filters: { type?: string; category?: string; status?: str
       prisma.object.findMany({
         where,
         orderBy: [{ status: "asc" }, { createdAt: "desc" }],
-        select: { id: true, title: true, type: true, category: true, price: true, status: true, featured: true, areaTotal: true },
+        select: {
+          id: true, title: true, type: true, category: true,
+          price: true, status: true, featured: true,
+          areaTotal: true, areaMin: true, floor: true, floorsTotal: true,
+          address: true, metro: true, description: true,
+        },
       }),
       prisma.object.findMany({
         select: { type: true, category: true },
@@ -128,7 +133,19 @@ export default async function AdminObjectsPage({ searchParams }: PageProps) {
                         Изменить
                       </Link>
                     )}
-                    <TeaserButton objectId={obj.id} objectTitle={obj.title} />
+                    <TeaserButton
+                      objectId={obj.id}
+                      objectTitle={obj.title}
+                      type={obj.type}
+                      category={obj.category}
+                      address={obj.address}
+                      metro={obj.metro}
+                      areaTotal={obj.areaTotal}
+                      areaMin={obj.areaMin}
+                      floor={obj.floor}
+                      floorsTotal={obj.floorsTotal}
+                      description={obj.description}
+                    />
                   </td>
                 </tr>
               ))}

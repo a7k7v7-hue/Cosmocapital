@@ -222,7 +222,19 @@ export default function ObjectForm({ initialData }: ObjectFormProps) {
         </button>
         {isEdit && initialData && (
           <span className="ml-auto">
-            <TeaserButton objectId={initialData.id} objectTitle={initialData.title} />
+            <TeaserButton
+              objectId={initialData.id}
+              objectTitle={initialData.title}
+              type={initialData.type}
+              category={initialData.category}
+              address={initialData.address}
+              metro={initialData.metro}
+              areaTotal={initialData.areaTotal}
+              areaMin={initialData.areaMin}
+              floor={initialData.floor}
+              floorsTotal={initialData.floorsTotal}
+              description={initialData.description}
+            />
           </span>
         )}
       </div>
