@@ -22,8 +22,15 @@ export async function POST(req: NextRequest) {
 
   const hashed = await bcrypt.hash(newPw, 12);
   const pwField = "pass" + "word";
-  const upd = { [pwField]: hashed } as Parameters<typeof prisma.user.update>[0]["data"];
-  await prisma.user.update({ where: { id: head.id }, data: upd });
+  const upd: Record<string, unknown> = { [pwField]: hashed };
 
-  return NextResponse.json({ ok: true, email: head.email });
+  const envEmail = (process.env.ADMIN_EMAIL ?? "").trim();
+  if (envEmail) upd.email = envEmail;
+
+  await prisma.user.update({
+    where: { id: head.id },
+    data: upd as Parameters<typeof prisma.user.update>[0]["data"],
+  });
+
+  return NextResponse.json({ ok: true, email: envEmail || head.email });
 }
