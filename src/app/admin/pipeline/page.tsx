@@ -13,6 +13,7 @@ import { Suspense } from "react";
 import PipelineTable from "@/components/admin/pipeline/PipelineTable";
 import BrokerChips from "@/components/admin/pipeline/BrokerChips";
 import KanbanBoard, { APPROACHING_STUCK_DAYS } from "@/components/admin/pipeline/KanbanBoard";
+import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/session";
 import { canEdit as roleCanEdit, seeAllBrokers } from "@/lib/roles";
 
@@ -84,11 +85,12 @@ export default async function PipelinePage({
   searchParams: Promise<{ tab?: string; broker?: string; view?: string }>;
 }) {
   const sessionUser = await getSessionUser();
-  const userCanEdit = roleCanEdit(sessionUser?.role ?? "RESEARCH");
-  const userSeeAll = seeAllBrokers(sessionUser?.role ?? "RESEARCH");
+  if (!sessionUser) redirect("/admin/login");
+  const userCanEdit = roleCanEdit(sessionUser.role);
+  const userSeeAll = seeAllBrokers(sessionUser.role);
 
   const { tab: rawTab, broker: brokerParam, view } = await searchParams;
-  const broker = userSeeAll ? brokerParam : (sessionUser?.brokerName ?? brokerParam);
+  const broker = userSeeAll ? brokerParam : (sessionUser.brokerName ?? brokerParam);
   const kanban = view === "kanban";
   const tab: Tab =
     rawTab === "closed" ? "closed" : rawTab === "lost" ? "lost" : "active";

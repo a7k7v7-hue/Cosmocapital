@@ -18,7 +18,8 @@ export default async function NewDealPage({
   }>;
 }) {
   const [user, sp] = await Promise.all([getSessionUser(), searchParams]);
-  if (!user || !canEdit(user.role)) redirect("/admin/pipeline");
+  if (!user) redirect("/admin/login");
+  if (!canEdit(user.role)) redirect("/admin/pipeline");
 
   const prefill = sp.clientName
     ? {
