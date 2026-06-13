@@ -19,6 +19,7 @@ const createSchema = z.object({
   nextActionDate: z.string().datetime({ offset: true }).nullable().optional(),
   nextActionDesc: z.string().max(500).nullable().optional(),
   notes: z.string().max(2000).nullable().optional(),
+  objectId: z.string().uuid().nullable().optional(),
 });
 
 export async function GET(req: NextRequest) {
@@ -69,30 +70,40 @@ export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
   const parsed = createSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 422 });
+    const fields = parsed.error.flatten().fieldErrors;
+    const firstMsg = Object.values(fields).flat()[0] ?? "Ошибка валидации";
+    return NextResponse.json({ error: { message: firstMsg, fields } }, { status: 422 });
   }
 
   const data = parsed.data;
   const expectedGci = data.expectedGci ?? DEFAULT_GCI[data.dealType] ?? 0;
 
-  const deal = await prisma.deal.create({
-    data: {
-      brokerName: data.brokerName,
-      segment: data.segment,
-      dealType: data.dealType,
-      clientName: data.clientName,
-      objectDescription: data.objectDescription,
-      areaSqm: data.areaSqm ?? null,
-      expectedGci,
-      expectedCloseDate: data.expectedCloseDate ? new Date(data.expectedCloseDate) : null,
-      lprContact: data.lprContact ?? null,
-      leadSource: data.leadSource ?? null,
-      nextActionDate: data.nextActionDate ? new Date(data.nextActionDate) : null,
-      nextActionDesc: data.nextActionDesc ?? null,
-      notes: data.notes ?? null,
-      lastStageChangedAt: new Date(),
-    },
-  });
-
-  return NextResponse.json(deal, { status: 201 });
+  try {
+    const deal = await prisma.deal.create({
+      data: {
+        brokerName: data.brokerName,
+        segment: data.segment,
+        dealType: data.dealType,
+        clientName: data.clientName,
+        objectDescription: data.objectDescription,
+        areaSqm: data.areaSqm ?? null,
+        expectedGci,
+        expectedCloseDate: data.expectedCloseDate ? new Date(data.expectedCloseDate) : null,
+        lprContact: data.lprContact ?? null,
+        leadSource: data.leadSource ?? null,
+        nextActionDate: data.nextActionDate ? new Date(data.nextActionDate) : null,
+        nextActionDesc: data.nextActionDesc ?? null,
+        notes: data.notes ?? null,
+        objectId: data.objectId ?? null,
+        lastStageChangedAt: new Date(),
+      },
+    });
+    return NextResponse.json(deal, { status: 201 });
+  } catch (e) {
+    console.error("deal create error", e);
+    return NextResponse.json(
+      { error: { message: "Ошибка базы данных — проверь логи сервера" } },
+      { status: 500 }
+    );
+  }
 }

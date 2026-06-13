@@ -137,7 +137,11 @@ export default function DealForm({ initialData, prefill, mode }: DealFormProps) 
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError(data?.error?.message ?? "Ошибка сохранения");
+        const msg =
+          typeof data?.error === "string"
+            ? data.error
+            : data?.error?.message ?? `Ошибка ${res.status}`;
+        setError(msg);
         return;
       }
 
