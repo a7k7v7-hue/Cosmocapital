@@ -12,8 +12,6 @@
  *   TCI — Telegram chat id
  */
 
-const crypto = require("crypto");
-
 const rk = process.env.RENDER_API_KEY;
 if (!rk) {
   console.error("Укажи RENDER_API_KEY в переменных окружения");
@@ -21,7 +19,11 @@ if (!rk) {
 }
 
 const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
-const gen   = (n) => Array.from(crypto.randomBytes(n)).map((b) => chars[b % chars.length]).join("");
+const gen   = (n) => {
+  const buf = new Uint8Array(n);
+  globalThis.crypto.getRandomValues(buf);
+  return Array.from(buf).map((b) => chars[b % chars.length]).join("");
+};
 
 const ae  = process.env.AE  || "admin@cosmacapital.ru";
 const pw  = process.env.PW  || gen(16);
