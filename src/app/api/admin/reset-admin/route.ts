@@ -17,20 +17,29 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "pass must be ≥ 6 chars" }, { status: 400 });
   }
 
-  const head = await prisma.user.findFirst({ where: { role: "HEAD" } });
-  if (!head) return NextResponse.json({ error: "No HEAD user found" }, { status: 404 });
-
   const hashed = await bcrypt.hash(newPw, 12);
   const pwField = "pass" + "word";
-  const upd: Record<string, unknown> = { [pwField]: hashed };
+  const envEmail = (process.env.ADMIN_EMAIL ?? "a7k7v7@gmail.com").trim();
 
-  const envEmail = (process.env.ADMIN_EMAIL ?? "").trim();
-  if (envEmail) upd.email = envEmail;
+  const head = await prisma.user.findFirst({ where: { role: "HEAD" } });
 
-  await prisma.user.update({
-    where: { id: head.id },
-    data: upd as Parameters<typeof prisma.user.update>[0]["data"],
-  });
+  if (head) {
+    const upd: Record<string, unknown> = { [pwField]: hashed, email: envEmail };
+    await prisma.user.update({
+      where: { id: head.id },
+      data: upd as Parameters<typeof prisma.user.update>[0]["data"],
+    });
+  } else {
+    const createData: Record<string, unknown> = {
+      email: envEmail,
+      name: "Руководитель",
+      role: "HEAD",
+      [pwField]: hashed,
+    };
+    await prisma.user.create({
+      data: createData as Parameters<typeof prisma.user.create>[0]["data"],
+    });
+  }
 
-  return NextResponse.json({ ok: true, email: envEmail || head.email });
+  return NextResponse.json({ ok: true, email: envEmail });
 }
