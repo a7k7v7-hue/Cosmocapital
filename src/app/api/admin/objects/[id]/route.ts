@@ -6,7 +6,7 @@ import { canEdit } from "@/lib/roles";
 
 const patchSchema = z.object({
   type: z.enum(["RENT", "SALE"]).optional(),
-  category: z.enum(["OFFICE", "RETAIL", "WAREHOUSE", "FREE_PURPOSE", "PRODUCTION"]).optional(),
+  category: z.enum(["OFFICE", "RETAIL", "WAREHOUSE", "FREE_PURPOSE", "PRODUCTION", "LAND"]).optional(),
   title: z.string().min(3).max(200).optional(),
   description: z.string().min(10).optional(),
   address: z.string().min(5).optional(),
@@ -20,6 +20,9 @@ const patchSchema = z.object({
   photos: z.array(z.string()).optional(),
   status: z.enum(["ACTIVE", "ARCHIVED"]).optional(),
   featured: z.coerce.boolean().optional(),
+  landCategory: z.string().nullable().optional(),
+  landVri: z.string().nullable().optional(),
+  cadastralNumber: z.string().nullable().optional(),
 });
 
 export async function PATCH(

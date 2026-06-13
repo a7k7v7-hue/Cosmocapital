@@ -6,7 +6,7 @@ import { canEdit } from "@/lib/roles";
 
 const objectSchema = z.object({
   type: z.enum(["RENT", "SALE"]),
-  category: z.enum(["OFFICE", "RETAIL", "WAREHOUSE", "FREE_PURPOSE", "PRODUCTION"]),
+  category: z.enum(["OFFICE", "RETAIL", "WAREHOUSE", "FREE_PURPOSE", "PRODUCTION", "LAND"]),
   title: z.string().min(3).max(200),
   description: z.string().min(10),
   address: z.string().min(5),
@@ -20,6 +20,9 @@ const objectSchema = z.object({
   photos: z.array(z.string()).default([]),
   status: z.enum(["ACTIVE", "ARCHIVED"]).default("ACTIVE"),
   featured: z.coerce.boolean().default(false),
+  landCategory: z.string().optional().nullable(),
+  landVri: z.string().optional().nullable(),
+  cadastralNumber: z.string().optional().nullable(),
 });
 
 export async function POST(req: NextRequest) {

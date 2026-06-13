@@ -8,7 +8,7 @@ import TeaserButton from "@/components/admin/TeaserButton";
 
 type ObjectStatus = "ACTIVE" | "ARCHIVED";
 type ObjType = "RENT" | "SALE";
-type ObjCategory = "OFFICE" | "RETAIL" | "WAREHOUSE" | "FREE_PURPOSE" | "PRODUCTION";
+type ObjCategory = "OFFICE" | "RETAIL" | "WAREHOUSE" | "FREE_PURPOSE" | "PRODUCTION" | "LAND";
 
 interface InitialData {
   id: string;
@@ -27,6 +27,9 @@ interface InitialData {
   photos: string[];
   status: ObjectStatus;
   featured: boolean;
+  landCategory: string | null;
+  landVri: string | null;
+  cadastralNumber: string | null;
 }
 
 interface ObjectFormProps {
@@ -41,6 +44,9 @@ export default function ObjectForm({ initialData }: ObjectFormProps) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [photos, setPhotos] = useState<string[]>(initialData?.photos ?? []);
+  const [category, setCategory] = useState<ObjCategory>(initialData?.category ?? "OFFICE");
+
+  const isLand = category === "LAND";
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -48,7 +54,7 @@ export default function ObjectForm({ initialData }: ObjectFormProps) {
     setError(null);
 
     const fd = new FormData(e.currentTarget);
-    const body = {
+    const body: Record<string, unknown> = {
       type: fd.get("type"),
       category: fd.get("category"),
       title: fd.get("title"),
@@ -56,14 +62,17 @@ export default function ObjectForm({ initialData }: ObjectFormProps) {
       address: fd.get("address"),
       metro: fd.get("metro") || null,
       areaTotal: fd.get("areaTotal"),
-      areaMin: fd.get("areaMin") || null,
-      floor: fd.get("floor") || null,
-      floorsTotal: fd.get("floorsTotal") || null,
+      areaMin: isLand ? null : (fd.get("areaMin") || null),
+      floor: isLand ? null : (fd.get("floor") || null),
+      floorsTotal: isLand ? null : (fd.get("floorsTotal") || null),
       price: fd.get("price"),
-      pricePerSqm: fd.get("pricePerSqm") || null,
+      pricePerSqm: isLand ? null : (fd.get("pricePerSqm") || null),
       status: fd.get("status"),
       featured: fd.get("featured") === "on",
       photos,
+      landCategory: isLand ? (fd.get("landCategory") || null) : null,
+      landVri: isLand ? (fd.get("landVri") || null) : null,
+      cadastralNumber: isLand ? (fd.get("cadastralNumber") || null) : null,
     };
 
     const url = isEdit ? `/api/admin/objects/${initialData.id}` : "/api/admin/objects";
@@ -107,7 +116,13 @@ export default function ObjectForm({ initialData }: ObjectFormProps) {
             </select>
           </Field>
           <Field label="Категория *">
-            <select name="category" defaultValue={d?.category ?? "OFFICE"} required className={INPUT}>
+            <select
+              name="category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value as ObjCategory)}
+              required
+              className={INPUT}
+            >
               {(Object.keys(CATEGORY_LABELS) as ObjCategory[]).map((c) => (
                 <option key={c} value={c}>{CATEGORY_LABELS[c]}</option>
               ))}
@@ -120,7 +135,7 @@ export default function ObjectForm({ initialData }: ObjectFormProps) {
       <Section title="Описание объекта">
         <Field label="Название *">
           <input name="title" type="text" required defaultValue={d?.title}
-            placeholder="Склад класса А, Новорижское шоссе"
+            placeholder={isLand ? "Участок 5 га, Новорижское шоссе" : "Склад класса А, Новорижское шоссе"}
             className={INPUT} />
         </Field>
         <Field label="Описание *">
@@ -146,48 +161,77 @@ export default function ObjectForm({ initialData }: ObjectFormProps) {
         </div>
       </Section>
 
-      {/* Section 4: Параметры */}
-      <Section title="Площадь и этажность">
+      {/* Section 4: Параметры участка (только для LAND) */}
+      {isLand && (
+        <Section title="Параметры участка">
+          <div className="grid sm:grid-cols-2 gap-4">
+            <Field label="Категория земли">
+              <input name="landCategory" type="text" defaultValue={d?.landCategory ?? ""}
+                placeholder="Земли промышленности"
+                className={INPUT} />
+            </Field>
+            <Field label="Кадастровый номер">
+              <input name="cadastralNumber" type="text" defaultValue={d?.cadastralNumber ?? ""}
+                placeholder="50:20:0010101:123"
+                className={INPUT} />
+            </Field>
+          </div>
+          <Field label="ВРИ (вид разрешённого использования)">
+            <input name="landVri" type="text" defaultValue={d?.landVri ?? ""}
+              placeholder="Для размещения производственных и административных зданий"
+              className={INPUT} />
+          </Field>
+        </Section>
+      )}
+
+      {/* Section 5: Площадь и этажность */}
+      <Section title={isLand ? "Площадь" : "Площадь и этажность"}>
         <div className="grid sm:grid-cols-3 gap-4">
-          <Field label="Общая площадь, м² *">
-            <input name="areaTotal" type="number" required step="0.1" min="1"
+          <Field label={isLand ? "Площадь, га *" : "Общая площадь, м² *"}>
+            <input name="areaTotal" type="number" required step="0.01" min="0.01"
               defaultValue={d?.areaTotal} className={INPUT} />
           </Field>
-          <Field label="Мин. секция, м²">
-            <input name="areaMin" type="number" step="0.1" defaultValue={d?.areaMin ?? ""}
-              placeholder="От" className={INPUT} />
-          </Field>
-          <Field label="Этаж / Всего этажей">
-            <div className="flex gap-2">
-              <input name="floor" type="number" defaultValue={d?.floor ?? ""} placeholder="3"
-                className={INPUT} />
-              <input name="floorsTotal" type="number" defaultValue={d?.floorsTotal ?? ""} placeholder="9"
-                className={INPUT} />
-            </div>
-          </Field>
+          {!isLand && (
+            <>
+              <Field label="Мин. секция, м²">
+                <input name="areaMin" type="number" step="0.1" defaultValue={d?.areaMin ?? ""}
+                  placeholder="От" className={INPUT} />
+              </Field>
+              <Field label="Этаж / Всего этажей">
+                <div className="flex gap-2">
+                  <input name="floor" type="number" defaultValue={d?.floor ?? ""} placeholder="3"
+                    className={INPUT} />
+                  <input name="floorsTotal" type="number" defaultValue={d?.floorsTotal ?? ""} placeholder="9"
+                    className={INPUT} />
+                </div>
+              </Field>
+            </>
+          )}
         </div>
       </Section>
 
-      {/* Section 5: Стоимость */}
+      {/* Section 6: Стоимость */}
       <Section title="Стоимость">
         <div className="grid sm:grid-cols-2 gap-4">
           <Field label="Цена, ₽ (0 = по запросу) *">
             <input name="price" type="number" required min="0" defaultValue={d?.price ?? 0}
               className={INPUT} />
           </Field>
-          <Field label="Цена за м², ₽">
-            <input name="pricePerSqm" type="number" defaultValue={d?.pricePerSqm ?? ""}
-              placeholder="Заполнится авто" className={INPUT} />
-          </Field>
+          {!isLand && (
+            <Field label="Цена за м², ₽">
+              <input name="pricePerSqm" type="number" defaultValue={d?.pricePerSqm ?? ""}
+                placeholder="Заполнится авто" className={INPUT} />
+            </Field>
+          )}
         </div>
       </Section>
 
-      {/* Section 6: Фотографии */}
+      {/* Section 7: Фотографии */}
       <Section title="Фотографии">
         <PhotoUpload photos={photos} onChange={setPhotos} />
       </Section>
 
-      {/* Section 7: Публикация */}
+      {/* Section 8: Публикация */}
       <Section title="Публикация">
         <div className="flex items-center gap-6 flex-wrap">
           <Field label="Статус">

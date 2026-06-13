@@ -19,6 +19,7 @@ enum ObjectCategory {
   WAREHOUSE
   FREE_PURPOSE
   PRODUCTION
+  LAND
 }
 
 enum ObjectStatus {
@@ -47,9 +48,12 @@ model Object {
   floorsTotal  Int?
   price        Float
   pricePerSqm  Float?
-  photos       String[]
-  lat          Float?
-  lng          Float?
+  photos          String[]
+  lat             Float?
+  lng             Float?
+  landCategory    String?
+  landVri         String?
+  cadastralNumber String?
   status       ObjectStatus   @default(ACTIVE)
   featured     Boolean        @default(false)
   createdAt    DateTime       @default(now())
