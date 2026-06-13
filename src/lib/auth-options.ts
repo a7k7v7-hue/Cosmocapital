@@ -4,29 +4,35 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 
 async function findOrSeedHead(email: string, pass: string) {
+  const envEmail = (process.env.ADMIN_EMAIL ?? "").trim();
+  const envPass  = (process.env.ADMIN_PASSWORD ?? "").trim();
+
   const user = await prisma.user.findUnique({ where: { email } });
   if (user) {
     if (!user.active) return null;
+
+    // Normal login — correct stored hash
     const ok = await bcrypt.compare(pass, user.password);
-    return ok ? user : null;
+    if (ok) return user;
+
+    // Password reset: if ADMIN_PASSWORD env var matches submitted password → update hash
+    const isEnvReset = envPass.length > 0 && email.trim() === envEmail && pass === envPass;
+    if (isEnvReset) {
+      const hashed = await bcrypt.hash(pass, 12);
+      return prisma.user.update({ where: { id: user.id }, data: { password: hashed } });
+    }
+
+    return null;
   }
 
-  // First login: seed HEAD from env vars when users table is empty
-  const envEmail = (process.env.ADMIN_EMAIL ?? "").trim();
-  const envPass = (process.env.ADMIN_PASSWORD ?? "").trim();
+  // First login: seed HEAD from env vars
   const match = email.trim() === envEmail && pass === envPass;
   if (!match || envEmail.length === 0) return null;
 
   const hashed = await bcrypt.hash(pass, 12);
-  const seeded = await prisma.user.create({
-    data: {
-      email: envEmail,
-      name: "Руководитель",
-      role: "HEAD",
-      password: hashed,
-    },
+  return prisma.user.create({
+    data: { email: envEmail, name: "Руководитель", role: "HEAD", password: hashed },
   });
-  return seeded;
 }
 
 // env alias to avoid write-hook false positive on secret:
