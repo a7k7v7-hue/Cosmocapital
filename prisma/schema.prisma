@@ -60,6 +60,16 @@ model Object {
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
 
+  // DD COMPS import (Cosmo Capital CRM import, июнь 2026)
+  ddCompsId    String?        @unique
+  blocksCount  Int?
+  trustScore   Float?
+  trustClass   String?
+  dataSource   String?
+  recordedDate DateTime?
+  manager      String?
+  stage        String?
+
   leads        Lead[]
   deals        Deal[]
 

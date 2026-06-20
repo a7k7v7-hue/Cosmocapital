@@ -1,5 +1,7 @@
 # Космокапитал - навигация
 
+> Второй мозг владельца: `C:\My Project\_brain\owner.md`
+> Рабочий процесс: `C:\My Project\_brain\workflow.md`
 > Полная карта всех бизнесов владельца: `C:\My Project\PROJECTS.md`
 
 ## Что это за проект

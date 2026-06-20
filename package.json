@@ -16,6 +16,7 @@
     "db:push": "prisma db push",
     "db:seed": "npx tsx prisma/seed.ts",
     "db:migrate-crm": "npx tsx prisma/migrate-crm.ts",
+    "db:import-dd-comps": "npx tsx prisma/import-dd-comps.ts",
     "db:studio": "prisma studio"
   },
   "dependencies": {
