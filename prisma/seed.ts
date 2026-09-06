@@ -2,7 +2,36 @@ import { PrismaClient, ObjectType, ObjectCategory } from "../src/generated/prism
 
 const prisma = new PrismaClient();
 
+function assertNotProduction(databaseUrl: string) {
+  const looksLikeProd =
+    /railway\.app|render\.com|neon\.tech|supabase\.co/i.test(databaseUrl) &&
+    process.env.ALLOW_SEED_PROD !== 'true';
+
+  if (looksLikeProd) {
+    console.error(
+      '❌ DATABASE_URL похож на облачный/прод-хост.\n' +
+      'db:seed не будет выполнен, чтобы не затереть реальные данные.\n' +
+      'Если это осознанно — запусти с ALLOW_SEED_PROD=true.'
+    );
+    process.exit(1);
+  }
+}
+
+async function assertEmptyDatabase() {
+  const count = await prisma.object.count();
+  if (count > 0 && process.env.ALLOW_SEED_NONEMPTY !== 'true') {
+    console.error(
+      `В таблице objects уже ${count} объектов. db:seed предназначен для пустой БД.\n` +
+      'Если это осознанно — запусти с ALLOW_SEED_NONEMPTY=true.'
+    );
+    process.exit(1);
+  }
+}
+
 async function main() {
+  assertNotProduction(process.env.DATABASE_URL ?? '');
+  await assertEmptyDatabase();
+
   await prisma.service.createMany({
     data: [
       { title: "Аренда офисов", description: "Подбор и оформление офисных помещений под ваш бизнес.", icon: "🏢", order: 1 },
@@ -115,5 +144,8 @@ async function main() {
 }
 
 main()
-  .catch(console.error)
+  .catch((error) => {
+    console.error('❌ Seed failed:', error);
+    process.exit(1);
+  })
   .finally(() => prisma.$disconnect());
