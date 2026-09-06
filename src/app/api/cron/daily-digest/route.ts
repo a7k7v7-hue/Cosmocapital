@@ -4,13 +4,20 @@ import { sendDailyDigest } from "@/lib/notify";
 
 // Called by Vercel Cron (or Render Cron) at 09:00 MSK every weekday.
 // Authenticate via CRON_SECRET env var — Vercel sends it as Bearer token automatically.
+if (!process.env.CRON_SECRET) {
+  console.error(
+    "[cron] CRON_SECRET is not set — failing closed: /api/cron/daily-digest will reject all requests with 401 until CRON_SECRET is configured."
+  );
+}
+
 export async function GET(req: NextRequest) {
   const token = process.env.CRON_SECRET;
-  if (token) {
-    const auth = req.headers.get("authorization");
-    if (auth !== `Bearer ${token}`) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  if (!token) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const auth = req.headers.get("authorization");
+  if (auth !== `Bearer ${token}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const now = new Date();
