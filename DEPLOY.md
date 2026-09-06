@@ -66,6 +66,19 @@ npm run db:seed
 
 ---
 
+## Получение DATABASE_URL для локальной разработки
+
+Render Dashboard → сервис `cosmacapital-db` → **Connect** → скопировать **External Database URL**.
+
+**Использовать только для чтения** (сверка данных, отладка). Не запускать против этой строки
+подключения `db:seed` или `db:migrate`:
+- `npm run db:seed` — guard в `prisma/seed.ts` заблокирует запись при непустой БД, но это
+  дополнительная защита, а не гарантия на все случаи.
+- `npx prisma migrate deploy` / `migrate dev` — **guard их не ловит вообще**, миграция
+  применится к проду напрямую.
+
+---
+
 ## Smoke Test
 
 - [ ] `https://cosmacapital.onrender.com` — главная открывается
